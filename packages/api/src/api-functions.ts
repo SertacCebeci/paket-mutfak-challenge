@@ -1,11 +1,15 @@
 const BASE_URL = 'http://localhost:4000';
 
+export type OrderStatus = 'preparing' | 'prepared' | 'on_the_way' | 'delivered';
+export type BasketStatus = 'prepared' | 'on_the_way' | 'delivered';
+
 export interface Order {
   id: string;
   address: string;
   payment: string;
   delivery_time: string;
-  status: string;
+  basket_id: string | null;
+  status: OrderStatus;
   items: Array<{ id: string; name: string }>;
 }
 
@@ -16,9 +20,9 @@ export interface Courier {
 
 export interface Basket {
   id: string;
-  courier_id: string;
-  status: string;
-  orders: number[];
+  courier_id: string | null;
+  status: BasketStatus;
+  orders: string[];
 }
 
 export class API {
@@ -47,6 +51,24 @@ export class API {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(order),
+    });
+    return response.json();
+  }
+
+  static async updateOrderStatus(id: string, status: OrderStatus): Promise<Order> {
+    const response = await fetch(`${BASE_URL}/orders/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status }),
+    });
+    return response.json();
+  }
+
+  static async updateOrderBasket(id: string, basket_id: string | null): Promise<Order> {
+    const response = await fetch(`${BASE_URL}/orders/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ basket_id }),
     });
     return response.json();
   }
@@ -97,5 +119,17 @@ export class API {
 
   static async deleteBasket(id: string): Promise<void> {
     await fetch(`${BASE_URL}/baskets/${id}`, { method: 'DELETE' });
+  }
+
+  static async addOrderToBasket(basket_id: string, order_id: string): Promise<Basket> {
+    const basket = await API.getBasket(basket_id);
+    basket.orders.push(order_id);
+    return API.updateBasket(basket_id, { orders: basket.orders });
+  }
+
+  static async removeOrderFromBasket(basket_id: string, order_id: string): Promise<Basket> {
+    const basket = await API.getBasket(basket_id);
+    basket.orders = basket.orders.filter((id) => id !== order_id);
+    return API.updateBasket(basket_id, { orders: basket.orders });
   }
 }

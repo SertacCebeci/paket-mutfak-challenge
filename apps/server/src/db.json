@@ -20,6 +20,7 @@
       "payment": "Credit Card",
       "delivery_time": "2024-12-24T23:59:59Z",
       "status": "on_the_way",
+      "basket_id": "1",
       "items": [
         {
           "id": "1",
@@ -37,6 +38,7 @@
       "payment": "Cash",
       "delivery_time": "2024-12-25T12:00:00Z",
       "status": "on_the_way",
+      "basket_id": "1",
       "items": [
         {
           "id": "3",
@@ -53,6 +55,7 @@
       "address": "Kadıköy, İstanbul, Turkey,  Başka bir Sok, No: 456 Bina: 7 Daire: 8 Bina Adı: Uzun Apartmanı",
       "payment": "Credit Card",
       "status": "preparing",
+      "basket_id": null,
       "delivery_time": "2024-12-26T23:59:59Z",
       "items": [
         {

@@ -1,112 +1,112 @@
-import { Card, Typography, Tag } from 'antd';
-import { useSetAtom } from 'jotai';
-import { OrderStatus, Order, orderAtom } from './kanban-atoms';
+import { Card, Typography, Tag, Select, Button } from 'antd';
+import { useMutation, useQuery, useQueryClient, API, Order, OrderStatus } from '@paket/api';
 
-const TagsSwitch: React.FC<{ order: Order }> = ({ order }) => {
-  const setOrders = useSetAtom(orderAtom);
+interface OrderCardProps {
+  order: Order;
+}
 
-  if (order.status === 'preparing') {
-    return (
-      <div>
-        <Tag
-          className="cursor-pointer"
-          color="blue"
-          onClick={() => {
-            setOrders((prev) => prev.map((o) => (o.id === order.id ? { ...o, status: 'not_basket_prepared' } : o)));
-          }}
+export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
+  const queryClient = useQueryClient();
+  const { data: baskets = [] } = useQuery({ queryKey: ['baskets'], queryFn: API.getBaskets });
+
+  const updateOrderMutation = useMutation({
+    mutationFn: (variables: { id: string; status: OrderStatus }) => 
+      API.updateOrderStatus(variables.id, variables.status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['orders'] });
+    },
+  });
+
+  const createBasketMutation = useMutation({
+    mutationFn: async () => {
+      const basket = await API.createBasket({
+        courier_id: null,
+        status: 'prepared',
+        orders: [],
+      });
+      await API.addOrderToBasket(basket.id, order.id);
+      await API.updateOrderBasket(order.id, basket.id);
+      return basket;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['baskets'] });
+      queryClient.invalidateQueries({ queryKey: ['orders'] });
+    },
+  });
+
+  const addToBasketMutation = useMutation({
+    mutationFn: async (basketId: string) => {
+      await API.addOrderToBasket(basketId, order.id);
+      await API.updateOrderBasket(order.id, basketId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['baskets'] });
+      queryClient.invalidateQueries({ queryKey: ['orders'] });
+    },
+  });
+
+  const removeFromBasketMutation = useMutation({
+    mutationFn: async () => {
+      if (!order.basket_id) return;
+      await API.removeOrderFromBasket(order.basket_id, order.id);
+      await API.updateOrderBasket(order.id, null);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['baskets'] });
+      queryClient.invalidateQueries({ queryKey: ['orders'] });
+    },
+  });
+
+  const renderActions = () => {
+    if (order.status === 'preparing') {
+      return (
+        <Button 
+          type="primary"
+          onClick={() => updateOrderMutation.mutate({ id: order.id, status: 'prepared' })}
         >
-          Move to Pending
-        </Tag>
-      </div>
-    );
-  }
+          Mark as Prepared
+        </Button>
+      );
+    }
 
-  if (order.status === 'not_basket_prepared') {
-    return (
-      <div>
-        <Tag
-          className="cursor-pointer"
-          color="blue"
-          onClick={() => {
-            setOrders((prev) => prev.map((o) => (o.id === order.id ? { ...o, status: 'preparing' } : o)));
-          }}
-        >
-          Move to Preparing
-        </Tag>
-        <Tag
-          className="cursor-pointer"
-          color="green"
-          onClick={() => {
-            setOrders((prev) => prev.map((o) => (o.id === order.id ? { ...o, status: 'in_basket_prepared' } : o)));
-          }}
-        >
-          Move to Basket
-        </Tag>
-      </div>
-    );
-  }
+    if (order.status === 'prepared' && !order.basket_id) {
+      const preparedBaskets = baskets.filter(b => b.status === 'prepared');
+      return (
+        <div className="flex gap-2">
+          <Select
+            style={{ width: 200 }}
+            placeholder="Select basket"
+            options={[
+              { label: 'Create new basket', value: 'new' },
+              ...preparedBaskets.map(b => ({ 
+                label: `Basket #${b.id}`, 
+                value: b.id 
+              }))
+            ]}
+            onChange={(value) => {
+              if (value === 'new') {
+                createBasketMutation.mutate();
+              } else {
+                addToBasketMutation.mutate(value);
+              }
+            }}
+          />
+        </div>
+      );
+    }
 
-  if (order.status === 'in_basket_prepared') {
-    return (
-      <div>
-        <Tag
-          className="cursor-pointer"
-          color="blue"
-          onClick={() => {
-            setOrders((prev) => prev.map((o) => (o.id === order.id ? { ...o, status: 'not_basket_prepared' } : o)));
-          }}
+    if (order.basket_id) {
+      return (
+        <Button 
+          danger
+          onClick={() => removeFromBasketMutation.mutate()}
         >
-          Move to Pending
-        </Tag>
-        <Tag
-          className="cursor-pointer"
-          color="green"
-          onClick={() => {
-            setOrders((prev) => prev.map((o) => (o.id === order.id ? { ...o, status: 'on_the_way' } : o)));
-          }}
-        >
-          Move to On The Way
-        </Tag>
-      </div>
-    );
-  }
+          Remove from Basket
+        </Button>
+      );
+    }
 
-  if (order.status === 'on_the_way') {
-    return (
-      <div>
-        <Tag
-          className="cursor-pointer"
-          color="blue"
-          onClick={() => {
-            setOrders((prev) => prev.map((o) => (o.id === order.id ? { ...o, status: 'in_basket_prepared' } : o)));
-          }}
-        >
-          Move to Basket
-        </Tag>
-        <Tag
-          className="cursor-pointer"
-          color="green"
-          onClick={() => {
-            setOrders((prev) => prev.map((o) => (o.id === order.id ? { ...o, status: 'delivered' } : o)));
-          }}
-        >
-          Move to Delivered
-        </Tag>
-      </div>
-    );
-  }
-
-  return null;
-};
-
-export const OrderCard: React.FC<Order> = (props) => {
-  const setOrders = useSetAtom(orderAtom);
-
-  const handleStatusChange = () => {
-    if (props.status === 'delivered') return;
-    if (props.status === 'on_the_way') return;
-    const newStatus = props.status === 'preparing' ? 'not_basket_prepared' : 'preparing';
-    setOrders((prev) => prev.map((o) => (o.id === props.id ? { ...o, status: newStatus } : o)));
+    return null;
   };
 
   return (
@@ -115,16 +115,16 @@ export const OrderCard: React.FC<Order> = (props) => {
       className="mb-2 shadow-sm hover:shadow-md transition-shadow bg-white"
       title={
         <div className="flex justify-between items-center">
-          <Typography.Text strong>#{props.id}</Typography.Text>
-          <TagsSwitch order={props} />
+          <Typography.Text strong>#{order.id}</Typography.Text>
+          {renderActions()}
         </div>
       }
     >
       <Typography.Text type="secondary" className="truncate block">
-        {props.items.map((item) => item.name).join(', ')}
+        {order.items.map((item) => item.name).join(', ')}
       </Typography.Text>
       <Typography.Text type="secondary" className="truncate block mt-2">
-        {props.address}
+        {order.address}
       </Typography.Text>
     </Card>
   );

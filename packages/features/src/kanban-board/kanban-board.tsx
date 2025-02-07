@@ -1,22 +1,24 @@
-import { useAtomValue } from 'jotai';
-import { orderAtom, basketAtom } from './kanban-atoms';
+import { useQuery, API } from '@paket/api';
 import { ColumnType, KanbanColumn } from './kanban-column';
 import React from 'react';
 
-// when anything changes in the atoms, this component will re-render
-// therefore everthing will rerender
-// needs optimization
-
 export const KanbanBoard = () => {
-  const orders = useAtomValue(orderAtom);
-  const baskets = useAtomValue(basketAtom);
+  const { data: orders = [] } = useQuery({
+    queryKey: ["orders"],
+    queryFn: API.getOrders
+  });
+
+  const { data: baskets = [] } = useQuery({
+    queryKey: ["baskets"],
+    queryFn: API.getBaskets
+  })
 
   const columns: { type: ColumnType }[] = [
     {
       type: 'preparing',
     },
     {
-      type: 'pending',
+      type: 'on_shelf',
     },
     {
       type: 'on_the_way',

@@ -1,5 +1,5 @@
-import { useAtomValue } from 'jotai';
-import { Basket, orderAtom } from './kanban-atoms';
+import { Card, Select, Button } from 'antd';
+import { useMutation, useQuery, useQueryClient,  API, Basket } from '@paket/api';
 import { OrderCard } from './order-card';
 
 interface BasketContainerProps {
@@ -7,24 +7,95 @@ interface BasketContainerProps {
 }
 
 export const BasketContainer = ({ basket }: BasketContainerProps) => {
-  const orders = useAtomValue(orderAtom);
+  const queryClient = useQueryClient();
+  const { data: orders = [] } = useQuery({ queryKey: ['orders'], queryFn: API.getOrders });
+  const { data: couriers = [] } = useQuery({ queryKey: ['couriers'], queryFn: API.getCouriers });
+
   const ordersInBasket = orders.filter((order) => basket.orders.includes(order.id));
 
+  const updateBasketMutation = useMutation({
+    mutationFn: (variables: Partial<Basket>) => 
+      API.updateBasket(basket.id, variables),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['baskets'] });
+    },
+  });
+
+  const deleteBasketMutation = useMutation({
+    mutationFn: async () => {
+      // First update all orders in the basket to remove basket_id
+      await Promise.all(
+        ordersInBasket.map(order => 
+          API.updateOrderBasket(order.id, null)
+        )
+      );
+      await API.deleteBasket(basket.id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['baskets'] });
+      queryClient.invalidateQueries({ queryKey: ['orders'] });
+    },
+  });
+
+  const renderActions = () => {
+    if (basket.status === 'prepared') {
+      return (
+        <div className="flex gap-2">
+          <Select
+            style={{ width: 200 }}
+            placeholder="Assign courier"
+            value={basket.courier_id || undefined}
+            options={couriers.map(c => ({ 
+              label: c.name, 
+              value: c.id 
+            }))}
+            onChange={(value) => {
+              updateBasketMutation.mutate({ courier_id: value });
+            }}
+          />
+          {basket.courier_id && ordersInBasket.length > 0 && (
+            <Button
+              type="primary"
+              onClick={() => updateBasketMutation.mutate({ status: 'on_the_way' })}
+            >
+              Move to On The Way
+            </Button>
+          )}
+          <Button 
+            danger
+            onClick={() => deleteBasketMutation.mutate()}
+          >
+            Delete Basket
+          </Button>
+        </div>
+      );
+    }
+
+    if (basket.status === 'on_the_way') {
+      return (
+        <Button
+          type="primary"
+          onClick={() => updateBasketMutation.mutate({ status: 'delivered' })}
+        >
+          Mark as Delivered
+        </Button>
+      );
+    }
+
+    return null;
+  };
+
   return (
-    <div className="bg-gray-800 rounded-lg overflow-hidden">
-      <div className="bg-gray-700 px-4 py-2 flex items-center justify-between">
-        <h3 className="text-white font-medium">#{basket.id}</h3>
-        <div className="bg-purple-600 text-white text-sm px-2 py-1 rounded">Courier #{basket.courier_id}</div>
+    <Card className="mb-4">
+      <div className="flex justify-between items-center mb-4">
+        <h3>Basket #{basket.id}</h3>
+        {renderActions()}
       </div>
-      <div className="p-3 min-h-[100px] bg-opacity-50 bg-gray-700">
-        {ordersInBasket.length > 0 ? (
-          ordersInBasket.map((order) => <OrderCard key={order.id} {...order} />)
-        ) : (
-          <div className="h-full min-h-[100px] flex items-center justify-center">
-            <p className="text-gray-400 text-sm">Empty basket</p>
-          </div>
-        )}
+      <div>
+        {ordersInBasket.map((order) => (
+          <OrderCard key={order.id} order={order} />
+        ))}
       </div>
-    </div>
+    </Card>
   );
 };
