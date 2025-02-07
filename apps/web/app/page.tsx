@@ -1,10 +1,13 @@
 'use client';
-import { KanbanBoard } from '@paket/features';
+import { KanbanBoard, TopNavigation } from '@paket/features';
 
 export default function Page() {
   return (
-    <main className="min-h-screen p-8 bg-gray-100">
-      <KanbanBoard />
-    </main>
+    <div className="min-h-screen bg-gray-100">
+      <TopNavigation />
+      <main className="p-8">
+        <KanbanBoard />
+      </main>
+    </div>
   );
 }

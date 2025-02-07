@@ -53,6 +53,9 @@ when courier comes to the kitchen they usually take more than one order in order
 }
 </code>
 
+### Top Navigation
+The top navigation shows the title of the application, how many orders and currently shown in application and search functionality that fuzzy searchs the orders
+
 ## Features
 This application will take a form similar to a <b>Kanban Board</b> with three columns.
 
