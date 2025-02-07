@@ -14,10 +14,20 @@ export const BasketContainer = ({ basket }: BasketContainerProps) => {
   const ordersInBasket = orders.filter((order) => basket.orders.includes(order.id));
 
   const updateBasketMutation = useMutation({
-    mutationFn: (variables: Partial<Basket>) => 
-      API.updateBasket(basket.id, variables),
+    mutationFn: async (variables: Partial<Basket>) => {
+      // If we're moving to on_the_way, update all orders in the basket
+      if (variables.status === 'on_the_way') {
+        await Promise.all(
+          ordersInBasket.map(order => 
+            API.updateOrderStatus(order.id, 'on_the_way')
+          )
+        );
+      }
+      return API.updateBasket(basket.id, variables);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['baskets'] });
+      queryClient.invalidateQueries({ queryKey: ['orders'] });
     },
   });
 

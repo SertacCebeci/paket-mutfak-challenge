@@ -58,6 +58,11 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   });
 
   const renderActions = () => {
+    // Prevent any actions if order is on_the_way
+    if (order.status === 'on_the_way') {
+      return null;
+    }
+
     if (order.status === 'preparing') {
       return (
         <Button 
@@ -95,7 +100,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
       );
     }
 
-    if (order.basket_id) {
+    if (order.basket_id && order.status === 'prepared') {
       return (
         <Button 
           danger

@@ -74,12 +74,10 @@ A basket that is prepared also has a button that will delete the basket and remo
 
 ## Behaviors
 
-//done
 When an order's status becomes preparing
 Then order is moved to the preparing column
 Then order has a button to mark it as prepared
 
-//done
 When mark it as prepared button is clicked
 Then order's status is changed to prepared
 And order is moved to the on the shelf column
@@ -90,7 +88,7 @@ And order has a basket select with options "create a basket" and all the existin
 ...
 And an order has a button to add to baske
 
-//done
+
 If an order that is not basketed and on shelf exists
 When order's basket select is "create a basket"
 And order's "add to basket" button is clicked
@@ -157,6 +155,9 @@ Then basket has a button to move on the way
 
 When a basket is on the way
 Then basket has a button to mark as delivered
+
+When an order is on the way
+Then it has no actions (an order that is on the way cannot be moved out of the basket)
 
 When mark it as delivered button is clicked
 Then basket is removed from the on the way column
