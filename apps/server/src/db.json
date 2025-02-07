@@ -54,8 +54,8 @@
       "id": "3",
       "address": "Kadıköy, İstanbul, Turkey,  Başka bir Sok, No: 456 Bina: 7 Daire: 8 Bina Adı: Uzun Apartmanı",
       "payment": "Credit Card",
-      "status": "on_the_way",
-      "basket_id": "b828",
+      "status": "prepared",
+      "basket_id": null,
       "delivery_time": "2024-12-26T23:59:59Z",
       "items": [
         {
@@ -77,20 +77,6 @@
       "orders": [
         "1",
         "2"
-      ]
-    },
-    {
-      "id": "eb48",
-      "courier_id": "2",
-      "status": "on_the_way",
-      "orders": []
-    },
-    {
-      "id": "b828",
-      "courier_id": "2",
-      "status": "on_the_way",
-      "orders": [
-        "3"
       ]
     }
   ]

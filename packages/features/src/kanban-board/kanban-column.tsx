@@ -53,7 +53,7 @@ export const KanbanColumn: React.FC<ColumnProps> = ({ type, orders, baskets }) =
 
   return (
     <div className="bg-gray-100 p-4 rounded-lg">
-      <h2 className="text-xl font-bold mb-4">{title}</h2>
+      <h2 className="text-xl font-bold mb-4 text-gray-700">{title}</h2>
       <BasketRenderer columnType={type} baskets={baskets} />
       <OrderRenderer columnType={type} orders={orders} />
     </div>

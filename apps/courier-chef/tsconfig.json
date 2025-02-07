@@ -1,0 +1,11 @@
+{
+  "extends": "@paket/typescript-config/react-library.json",
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "moduleResolution": "bundler",
+    "module": "Preserve"
+  },
+  "include": ["src", "vite.config.ts"],
+  "exclude": ["node_modules"]
+}
