@@ -49,10 +49,21 @@ The Courier Chef Order Management System is a specialized application designed f
 ## User Interface
 
 ### Layout
-The interface follows a Kanban board design with three main columns:
+The interface follows a Kanban board design with three main columns, each featuring order count and sorting capabilities:
+
+#### Column Header Structure
+Each column header contains:
+- Column title
+- Order count indicator showing total number of contained orders
+- Sorting controls with options for:
+  - Order time (ascending/descending)
+  - Preparation time (ascending/descending)
+  - Restaurant name (alphabetical)
+  - Delivery address (alphabetical)
 
 #### 1. Preparing Column
 - **Content**: Individual orders in preparation
+- **Count Display**: Shows total number of orders being prepared
 - **Display Elements**:
   - Order ID
   - Preparation timer
@@ -62,11 +73,18 @@ The interface follows a Kanban board design with three main columns:
   - Complete delivery address
 - **Actions**:
   - Mark order as prepared
+- **Sorting Options**:
+  - By preparation time remaining
+  - By order received time
+  - By restaurant name
 
 #### 2. On the Shelf Column
 - **Organization**: Two sections
   - Top: Active baskets
   - Bottom: Unassigned prepared orders
+- **Count Display**: 
+  - Total orders in the column
+  - Breakdown of basketed vs unbasked orders
 - **Display Elements for Orders**:
   - All order information
   - Basket assignment options
@@ -80,9 +98,16 @@ The interface follows a Kanban board design with three main columns:
   - Assign courier to basket
   - Delete basket
   - Move basket to "On The Way"
+- **Sorting Options**:
+  - By time since preparation completed
+  - By delivery address proximity
+  - By restaurant name
 
 #### 3. On The Way Column
 - **Content**: Active delivery baskets
+- **Count Display**: 
+  - Total orders in delivery
+  - Orders per courier
 - **Display Elements**:
   - Basket information
   - Assigned courier
@@ -91,10 +116,14 @@ The interface follows a Kanban board design with three main columns:
 - **Actions**:
   - Mark orders as delivered
   - Mark basket as delivered (when all orders complete)
+- **Sorting Options**:
+  - By courier name
+  - By delivery time
+  - By number of orders in basket
 
 ### Top Navigation
 - Application title
-- Order count display
+- Global order count display showing total orders in system
 - Search functionality with fuzzy search capability for orders
 
 ## Core Functionality
@@ -137,6 +166,29 @@ The interface follows a Kanban board design with three main columns:
    - Similar to real-time (polled) updates for order status changes
    - Automatic removal of completed baskets
 
+## Additional Notes on Column Management
+
+### Column Order Persistence
+- Column sorting preferences are preserved between sessions
+- Each column maintains independent sorting preferences
+- Default sorting can be configured per column:
+  - Preparing: By preparation time remaining
+  - On the Shelf: By time since preparation completed
+  - On The Way: By delivery time
+
+### Column Order Behavior
+- Sort indicators visually show current sort direction
+- Secondary sort options available for tie-breaking
+- Sorting applies to:
+  - Individual orders in Preparing column
+  - Baskets and unassigned orders separately in On the Shelf column
+  - Baskets in On The Way column
+
+### Performance Considerations
+- Client-side sorting for immediate response
+- Debounced sort operations for large datasets
+- Optimized re-rendering for sort operations
+
 ## Technical Requirements
 
 ### Frontend Technologies
@@ -152,17 +204,16 @@ The interface follows a Kanban board design with three main columns:
 ## Optional Enhancements
 
 ### User Experience
-
-2. **Context Menus**
+1. **Context Menus**
    - Quick actions for orders
    - Courier assignment shortcuts
 
-3. **Animations and Transitions**
+2. **Animations and Transitions**
    - Status change animations
    - Basket creation/deletion effects
    - Hover states and interactive feedback
 
-4. **Notifications**
+3. **Notifications**
    - Operation success/failure alerts
    - New order notifications
    - Courier assignment confirmations
