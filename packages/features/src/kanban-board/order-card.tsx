@@ -22,6 +22,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
     mutationFn: async () => {
       const basket = await API.createBasket({
         courier_id: null,
+        delivered_by: null,
         status: 'prepared',
         orders: [],
       });

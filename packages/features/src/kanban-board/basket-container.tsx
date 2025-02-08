@@ -117,6 +117,16 @@ export const BasketContainer = ({ basket }: BasketContainerProps) => {
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-2">
           <h3>Basket #{basket.id}</h3>
+          {basket.courier_id && (
+            <span className="text-sm text-blue-500">
+              Assigned to: {availableCouriers.find(c => c.id === basket.courier_id)?.name}
+            </span>
+          )}
+          {basket.delivered_by && (
+            <span className="text-sm text-green-500">
+              Delivered by: {availableCouriers.find(c => c.id === basket.delivered_by)?.name}
+            </span>
+          )}
           {basket.status === 'on_the_way' && (
             <span className="text-sm text-gray-500">
               ({ordersInBasket.filter(o => o.status === 'delivered').length}/{ordersInBasket.length} delivered)

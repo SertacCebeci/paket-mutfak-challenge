@@ -32,6 +32,7 @@ The Courier Chef Order Management System is a specialized application designed f
 - **Attributes**:
   - Unique ID
   - Assigned courier ID (nullable)
+  - Delivered by courier ID (nullable)
   - Status (prepared, on_the_way, delivered)
   - Array of order IDs
 - **Business Rules**:
@@ -39,6 +40,10 @@ The Courier Chef Order Management System is a specialized application designed f
   - Can only be assigned to one courier through a one-to-one relationship
   - Must contain orders with geographically proximate delivery addresses
   - When assigned to a courier, the courier's basket_id is updated to match this basket's ID
+  - When marked as delivered:
+    - delivered_by field is set to the courier_id that delivered it
+    - courier_id is set to null
+    - assigned courier's basket_id is set to null
 
 ### Couriers
 - **Definition**: Delivery personnel responsible for delivering order baskets

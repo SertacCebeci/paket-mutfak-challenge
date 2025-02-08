@@ -22,6 +22,7 @@ export interface Courier {
 export interface Basket {
   id: string;
   courier_id: string | null;
+  delivered_by: string | null;
   status: BasketStatus;
   orders: string[];
 }
@@ -165,15 +166,21 @@ export class API {
     const basket = await API.getBasket(basketId);
     if (!basket.courier_id) return;
 
+    const currentCourierId = basket.courier_id;
+
     await Promise.all([
-      // Update basket status
+      // Update basket status and courier information
       fetch(`${BASE_URL}/baskets/${basketId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'delivered' }),
+        body: JSON.stringify({ 
+          status: 'delivered',
+          courier_id: null,
+          delivered_by: currentCourierId
+        }),
       }),
       // Clear courier's basket_id
-      fetch(`${BASE_URL}/couriers/${basket.courier_id}`, {
+      fetch(`${BASE_URL}/couriers/${currentCourierId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ basket_id: null }),

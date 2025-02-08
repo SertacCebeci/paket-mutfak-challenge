@@ -8,7 +8,7 @@
     {
       "id": "2",
       "name": "Yasin Beyazlı",
-      "basket_id": "92b1"
+      "basket_id": "136c"
     },
     {
       "id": "3",
@@ -84,7 +84,7 @@
         "location": "Kadıköy"
       },
       "status": "on_the_way",
-      "basket_id": "92b1",
+      "basket_id": "136c",
       "items": [
         {
           "id": "5",
@@ -100,55 +100,37 @@
     },
     {
       "id": "4",
-      "address": "Kadıköy, İstanbul, Turkey, Başka bir Sok, No: 456 Bina: 7 Daire: 8 Bina Adı: Uzun Apartmanı",
+      "address": "Kadıköy, İstanbul, Turkey,  Başka bir Sok, No: 456 Bina: 7 Daire: 8 Bina Adı: Uzun Apartmanı",
       "payment": "Credit Card",
-      "delivery_time": "2024-12-26T23:59:59Z",
-      "order_time": "2024-12-26T23:30:00Z",
-      "preparation_time": 20,
-      "restaurant": {
-        "id": "rest_3",
-        "name": "Tavukçu Mehmet",
-        "location": "Kadıköy"
-      },
       "status": "prepared",
-      "basket_id": "4f25",
+      "basket_id": "cc35",
+      "delivery_time": "2024-12-26T23:59:59Z",
       "items": [
         {
           "id": "5",
-          "name": "Havuçlu Salata",
-          "preparation_time": 15
+          "name": "Havuçlu Salata"
         },
         {
           "id": "6",
-          "name": "Yayık ayran",
-          "preparation_time": 5
+          "name": "Yayık ayran"
         }
       ]
     },
     {
       "id": "5",
-      "address": "Kadıköy, İstanbul, Turkey, Başka bir Sok, No: 456 Bina: 7 Daire: 8 Bina Adı: Uzun Apartmanı",
+      "address": "Kadıköy, İstanbul, Turkey,  Başka bir Sok, No: 456 Bina: 7 Daire: 8 Bina Adı: Uzun Apartmanı",
       "payment": "Credit Card",
-      "delivery_time": "2024-12-26T23:59:59Z",
-      "order_time": "2024-12-26T23:30:00Z",
-      "preparation_time": 25,
-      "restaurant": {
-        "id": "rest_3",
-        "name": "Tavukçu Mehmet",
-        "location": "Kadıköy"
-      },
-      "status": "prepared",
+      "status": "preparing",
       "basket_id": null,
+      "delivery_time": "2024-12-26T23:59:59Z",
       "items": [
         {
           "id": "5",
-          "name": "Havuçlu Tavuklu Salata",
-          "preparation_time": 20
+          "name": "Havuçlu Tavuklu Salata"
         },
         {
           "id": "6",
-          "name": "Yayılmış ayran",
-          "preparation_time": 5
+          "name": "Yayılmış ayran"
         }
       ]
     }
@@ -157,6 +139,7 @@
     {
       "id": "1",
       "courier_id": "1",
+      "delivered_by": null,
       "status": "delivered",
       "orders": [
         "1",
@@ -166,16 +149,18 @@
       "updated_at": "2024-12-24T23:50:00Z"
     },
     {
-      "id": "92b1",
+      "id": "136c",
       "courier_id": "2",
+      "delivered_by": null,
       "status": "on_the_way",
       "orders": [
         "3"
       ]
     },
     {
-      "id": "4f25",
+      "id": "cc35",
       "courier_id": null,
+      "delivered_by": null,
       "status": "prepared",
       "orders": [
         "4"
