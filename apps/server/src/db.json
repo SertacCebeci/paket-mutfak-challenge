@@ -8,7 +8,7 @@
     {
       "id": "2",
       "name": "Yasin Beyazlı",
-      "basket_id": null
+      "basket_id": "5cfb"
     },
     {
       "id": "3",
@@ -84,7 +84,7 @@
         "location": "Kadıköy"
       },
       "status": "prepared",
-      "basket_id": "4ccd",
+      "basket_id": null,
       "items": [
         {
           "id": "5",
@@ -149,13 +149,11 @@
       "updated_at": "2024-12-24T23:50:00Z"
     },
     {
-      "id": "4ccd",
-      "courier_id": null,
+      "id": "5cfb",
+      "courier_id": "2",
       "delivered_by": null,
       "status": "prepared",
-      "orders": [
-        "3"
-      ]
+      "orders": []
     }
   ]
 }

@@ -1,5 +1,12 @@
-import { Card, Typography, Tag, Select, Button, Tooltip } from 'antd';
-import { ClockCircleOutlined, EnvironmentOutlined, CreditCardOutlined } from '@ant-design/icons';
+import { Card, Typography, Tag, Select, Button, Tooltip, Space, Divider } from 'antd';
+import { 
+  ClockCircleOutlined, 
+  EnvironmentOutlined, 
+  CreditCardOutlined,
+  ShopOutlined,
+  CheckCircleOutlined,
+  LoadingOutlined
+} from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient, API, Order, OrderStatus } from '@paket/api';
 
 interface OrderCardProps {
@@ -59,6 +66,16 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
     },
   });
 
+  const getStatusColor = (status: OrderStatus) => {
+    switch (status) {
+      case 'preparing': return 'processing';
+      case 'prepared': return 'warning';
+      case 'on_the_way': return 'blue';
+      case 'delivered': return 'success';
+      default: return 'default';
+    }
+  };
+
   const renderTimer = () => {
     if (order.status === 'preparing') {
       const deliveryTime = new Date(order.delivery_time);
@@ -76,16 +93,46 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
     return null;
   };
 
-  const renderActions = () => {
-    // Orders in on_the_way status can only be marked as delivered
+  const renderOrderInfo = () => (
+    <Space direction="vertical" size="small" className="w-full">
+      <Space>
+        <Tag icon={<ShopOutlined />} color="blue">
+          {order.restaurant?.name}
+        </Tag>
+        <Tag icon={<CreditCardOutlined />} color="green">
+          {order.payment}
+        </Tag>
+        {renderTimer()}
+      </Space>
+      
+      <Typography.Paragraph 
+        ellipsis={{ rows: 2 }} 
+        className="mb-0"
+      >
+        <EnvironmentOutlined className="mr-1" />
+        {order.address}
+      </Typography.Paragraph>
+
+      <Space wrap>
+        {order.items.map((item) => (
+          <Tag key={item.id} bordered={false}>
+            {item.name}
+          </Tag>
+        ))}
+      </Space>
+    </Space>
+  );
+
+  const renderOrderActions = () => {
     if (order.status === 'on_the_way') {
       return (
         <Button
           type="primary"
+          icon={<CheckCircleOutlined />}
           disabled={false}
           onClick={() => updateOrderMutation.mutate({ id: order.id, status: 'delivered' })}
         >
-          Mark as Delivered
+          Mark Delivered
         </Button>
       );
     }
@@ -94,9 +141,10 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
       return (
         <Button 
           type="primary"
+          icon={<LoadingOutlined />}
           onClick={() => updateOrderMutation.mutate({ id: order.id, status: 'prepared' })}
         >
-          Mark as Prepared
+          Mark Prepared
         </Button>
       );
     }
@@ -104,26 +152,31 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
     if (order.status === 'prepared' && !order.basket_id) {
       const preparedBaskets = baskets.filter(b => b.status === 'prepared');
       return (
-        <div className="flex gap-2">
+        <Space>
           <Select
             style={{ width: 200 }}
             placeholder="Select basket"
             options={[
-              { label: 'Create new basket', value: 'new' },
+              { label: '+ Create new basket', value: 'new' },
               ...preparedBaskets.map(b => ({ 
                 label: `Basket #${b.id}`, 
                 value: b.id 
               }))
             ]}
-            onChange={(value) => {
-              if (value === 'new') {
-                createBasketMutation.mutate();
-              } else {
-                addToBasketMutation.mutate(value);
-              }
-            }}
           />
-        </div>
+          <Button type="primary" onClick={() => {
+            const selectElement = document.querySelector('.ant-select-selection-item') as HTMLElement;
+            const selectedValue = selectElement?.innerText;
+            if (selectedValue === '+ Create new basket') {
+              createBasketMutation.mutate();
+            } else {
+              const selectedOption = selectElement?.parentElement?.getAttribute('title');
+              addToBasketMutation.mutate(selectedOption as string);
+            }
+          }}>
+            Add to Basket
+          </Button>
+        </Space>
       );
     }
 
@@ -142,38 +195,26 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   };
 
   return (
-    <Card
-      size="small"
-      className="mb-2 shadow-sm hover:shadow-md transition-shadow bg-white"
+    <Card 
+      size="small" 
+      className="mb-2 hover:shadow-md transition-all"
       title={
         <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Typography.Text strong>#{order.id}</Typography.Text>
-            {renderTimer()}
-          </div>
-          {renderActions()}
+          <Space>
+            <Typography.Text strong>Order #{order.id}</Typography.Text>
+            <Tag color={getStatusColor(order.status)}>
+              {order.status.replace('_', ' ').toUpperCase()}
+            </Tag>
+          </Space>
         </div>
       }
-    >
-      <div className="space-y-2">
-        <Typography.Text type="secondary" className="block">
-          <div className="flex items-center gap-1">
-            <EnvironmentOutlined />
-            <span className="truncate">{order.address}</span>
-          </div>
-        </Typography.Text>
-        <Typography.Text type="secondary" className="block">
-          <div className="flex items-center gap-1">
-            <CreditCardOutlined />
-            {order.payment}
-          </div>
-        </Typography.Text>
-        <div className="flex flex-wrap gap-1">
-          {order.items.map((item) => (
-            <Tag key={item.id}>{item.name}</Tag>
-          ))}
+      actions={[
+        <div key="actions" className="px-4 py-2">
+          {renderOrderActions()}
         </div>
-      </div>
+      ]}
+    >
+      {renderOrderInfo()}
     </Card>
   );
 };

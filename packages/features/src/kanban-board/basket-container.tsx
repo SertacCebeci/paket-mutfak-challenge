@@ -1,4 +1,11 @@
-import { Card, Select, Button } from 'antd';
+import { Card, Select, Button, Space, Progress, Typography, Divider } from 'antd';
+import { 
+  ShoppingOutlined, 
+  UserOutlined, 
+  CheckCircleOutlined,
+  DeleteOutlined,
+  SendOutlined
+} from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient,  API, Basket } from '@paket/api';
 import { OrderCard } from './order-card';
 import React from 'react';
@@ -79,10 +86,49 @@ export const BasketContainer = ({ basket }: BasketContainerProps) => {
     },
   });
 
+  const renderBasketHeader = () => {
+    const deliveredCount = ordersInBasket.filter(o => o.status === 'delivered').length;
+    const progress = (deliveredCount / ordersInBasket.length) * 100;
+
+    return (
+      <Space className="w-full" direction="vertical" size="small">
+        <div className="flex justify-between items-center">
+          <Space>
+            <Typography.Title level={4} className="mb-0">
+              <ShoppingOutlined /> Basket #{basket.id}
+            </Typography.Title>
+            {basket.status !== 'delivered' && (
+              <Progress 
+                type="circle" 
+                percent={progress} 
+                size="small" 
+                status={progress === 100 ? 'success' : 'active'}
+              />
+            )}
+          </Space>
+          {renderActions()}
+        </div>
+        
+        <Space split={<Divider type="vertical" />}>
+          {basket.courier_id && (
+            <Typography.Text type="secondary">
+              <UserOutlined /> Assigned to: {availableCouriers.find(c => c.id === basket.courier_id)?.name}
+            </Typography.Text>
+          )}
+          {basket.delivered_by && (
+            <Typography.Text type="success">
+              <CheckCircleOutlined /> Delivered by: {availableCouriers.find(c => c.id === basket.delivered_by)?.name}
+            </Typography.Text>
+          )}
+        </Space>
+      </Space>
+    );
+  };
+
   const renderActions = () => {
     if (basket.status === 'prepared') {
       return (
-        <div className="flex gap-2">
+        <Space>
           <Select
             style={{ width: 200 }}
             placeholder="Assign courier"
@@ -91,58 +137,44 @@ export const BasketContainer = ({ basket }: BasketContainerProps) => {
               label: c.name, 
               value: c.id 
             }))}
-            onChange={(value) => {
-              assignCourierMutation.mutate(value);
-            }}
+            onChange={(value) => assignCourierMutation.mutate(value)}
           />
           {basket.courier_id && ordersInBasket.length > 0 && (
             <Button
               type="primary"
+              icon={<SendOutlined />}
               onClick={() => updateBasketMutation.mutate({ status: 'on_the_way' })}
             >
-              Move to On The Way
+              Send Out
             </Button>
           )}
           <Button 
             danger
+            icon={<DeleteOutlined />}
             onClick={() => deleteBasketMutation.mutate()}
           >
-            Delete Basket
+            Delete
           </Button>
-        </div>
+        </Space>
       );
     }
-
     return null;
   };
 
   return (
-    <Card className="mb-4">
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center gap-2">
-          <h3>Basket #{basket.id}</h3>
-          {basket.courier_id && (
-            <span className="text-sm text-blue-500">
-              Assigned to: {availableCouriers.find(c => c.id === basket.courier_id)?.name}
-            </span>
-          )}
-          {basket.delivered_by && (
-            <span className="text-sm text-green-500">
-              Delivered by: {availableCouriers.find(c => c.id === basket.delivered_by)?.name}
-            </span>
-          )}
-          {basket.status === 'on_the_way' && (
-            <span className="text-sm text-gray-500">
-              ({ordersInBasket.filter(o => o.status === 'delivered').length}/{ordersInBasket.length} delivered)
-            </span>
-          )}
-        </div>
-        {renderActions()}
-      </div>
-      <div>
+    <Card 
+      className="mb-4 shadow-sm hover:shadow-md transition-all"
+      title={renderBasketHeader()}
+    >
+      <div className="space-y-2">
         {ordersInBasket.map((order) => (
           <OrderCard key={order.id} order={order} />
         ))}
+        {ordersInBasket.length === 0 && (
+          <Typography.Text type="secondary" className="block text-center py-4">
+            No orders in this basket
+          </Typography.Text>
+        )}
       </div>
     </Card>
   );
