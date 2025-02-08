@@ -10,11 +10,16 @@ export const DeleteBasket: React.FC<{ basket: BasketEntity }> = ({
   basket,
 }) => {
   const invalidateAll = useInvalidateAll();
+
   const deleteBasketMutation = useMutation({
     mutationFn: async () => {
-      Promise.all(
+      await Promise.all(
         basket.orders.map((order_id) => API.updateOrderBasket(order_id, null)),
       );
+
+      if (basket.courier_id)
+        await API.removeCourierFromBasket(basket.id, basket.courier_id);
+
       await API.deleteBasket(basket.id);
     },
     onSuccess: () => {

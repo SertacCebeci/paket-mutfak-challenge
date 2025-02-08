@@ -161,7 +161,7 @@ export const KanbanColumn: React.FC<ColumnProps> = ({
   });
 
   return (
-    <div className="bg-slate-300 p-4 rounded-lg">
+    <div className="bg-slate-100 p-4 rounded-lg">
       <ColumnHeader
         type={type}
         orderCount={filteredOrders.length}

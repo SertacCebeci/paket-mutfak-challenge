@@ -1,4 +1,13 @@
-import { Card, Typography, Tag, Select, Button, Tooltip, Space, Divider } from 'antd';
+import {
+  Card,
+  Typography,
+  Tag,
+  Select,
+  Button,
+  Tooltip,
+  Space,
+  Divider,
+} from 'antd';
 import {
   ClockCircleOutlined,
   EnvironmentOutlined,
@@ -16,7 +25,10 @@ interface OrderCardProps {
 
 export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   const queryClient = useQueryClient();
-  const { data: baskets = [] } = useQuery({ queryKey: ['baskets'], queryFn: API.getBaskets });
+  const { data: baskets = [] } = useQuery({
+    queryKey: ['baskets'],
+    queryFn: API.getBaskets,
+  });
 
   const updateOrderMutation = useMutation({
     mutationFn: (variables: { id: string; status: OrderStatus }) =>
@@ -90,7 +102,10 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
 
       return (
         <Tooltip title="Time until delivery">
-          <Tag icon={<ClockCircleOutlined />} color={minutesLeft < 30 ? 'red' : 'blue'}>
+          <Tag
+            icon={<ClockCircleOutlined />}
+            color={minutesLeft < 30 ? 'red' : 'blue'}
+          >
             {minutesLeft}m
           </Tag>
         </Tooltip>
@@ -133,7 +148,9 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
           type="primary"
           icon={<CheckCircleOutlined />}
           disabled={false}
-          onClick={() => updateOrderMutation.mutate({ id: order.id, status: 'delivered' })}
+          onClick={() =>
+            updateOrderMutation.mutate({ id: order.id, status: 'delivered' })
+          }
         >
           Mark Delivered
         </Button>
@@ -145,7 +162,9 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
         <Button
           type="primary"
           icon={<LoadingOutlined />}
-          onClick={() => updateOrderMutation.mutate({ id: order.id, status: 'prepared' })}
+          onClick={() =>
+            updateOrderMutation.mutate({ id: order.id, status: 'prepared' })
+          }
         >
           Mark Prepared
         </Button>
@@ -190,15 +209,19 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 mb-2 overflow-hidden hover:shadow-md transition-all">
+    <div className="bg-white rounded-lg border border-gray-200 mb-2 overflow-hidden hover:shadow-xl shadow-md transition-all">
       <div className="px-4 py-3 border-b border-gray-100 flex justify-between items-center">
         <Space>
           <Typography.Text strong>Order #{order.id}</Typography.Text>
-          <Tag color={getStatusColor(order.status)}>{order.status.replace('_', ' ').toUpperCase()}</Tag>
+          <Tag color={getStatusColor(order.status)}>
+            {order.status.replace('_', ' ').toUpperCase()}
+          </Tag>
         </Space>
       </div>
       <div className="px-4 py-3">{renderOrderInfo()}</div>
-      <div className="px-4 py-3 bg-gray-50 border-t border-gray-100">{renderOrderActions()}</div>
+      <div className="px-4 py-3 bg-gray-50 border-t border-gray-100">
+        {renderOrderActions()}
+      </div>
     </div>
   );
 };

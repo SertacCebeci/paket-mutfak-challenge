@@ -12,15 +12,27 @@ export const BasketCourierSelect: React.FC<{ basket: BasketEntity }> = ({
 
   const queryClient = useQueryClient();
 
-  const availableCouriers = couriers.filter(
-    (c) => !basket.courier_id || c.id === basket.courier_id,
-  );
+  const availableCouriers = couriers.filter((courier) => {
+    return courier.basket_id === null || courier.basket_id === basket.id;
+  });
 
   const assignCourierMutation = useMutation({
-    mutationFn: (variables: { id: string; courier_id: string }) =>
-      API.assignCourierToBasket(variables.id, variables.courier_id),
+    mutationFn: async ({
+      basket,
+      new_courier_id,
+    }: {
+      basket: BasketEntity;
+      new_courier_id: string;
+    }) => {
+      if (basket.courier_id === new_courier_id) return;
+      if (basket.courier_id)
+        await API.removeCourierFromBasket(basket.id, basket.courier_id);
+
+      await API.assignCourierToBasket(basket.id, new_courier_id);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['baskets', basket.id] });
+      queryClient.invalidateQueries({ queryKey: ['couriers'] });
     },
   });
 
@@ -36,7 +48,7 @@ export const BasketCourierSelect: React.FC<{ basket: BasketEntity }> = ({
         value: c.id,
       }))}
       onChange={(value) => {
-        assignCourierMutation.mutate({ id: basket.id, courier_id: value });
+        assignCourierMutation.mutate({ basket: basket, new_courier_id: value });
       }}
     />
   );

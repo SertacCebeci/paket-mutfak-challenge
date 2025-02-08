@@ -55,10 +55,8 @@ export const Basket: React.FC<BasketProps> = ({ basketId }) => {
   if (orders.some((order) => !order.isSuccess)) return null;
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 mb-4 overflow-hidden hover:shadow-md transition-all">
-      <div className="p-4 border-b border-gray-200">
-        <BasketHeader basket={basket} />
-      </div>
+    <div className="bg-slate-500 border border-slate-800 rounded-lg mb-4 overflow-hidden hover:shadow-md transition-all opacity-75">
+      <BasketHeader basket={basket} />
       <div className="p-4 space-y-2">
         {orders.map((order) => {
           return order.isSuccess ? (

@@ -13,7 +13,7 @@ interface BasketEntityHeaderProps {
 
 export const BasketHeader: React.FC<BasketEntityHeaderProps> = ({ basket }) => {
   return (
-    <div className="w-full">
+    <div className="w-full bg-white p-3 shadow-md rounded-t-lg">
       <div className="w-full h-full flex items-start justify-start">
         <BasketTitle id={basket.id} />
         <BasketDeliveryProgress basket={basket} />

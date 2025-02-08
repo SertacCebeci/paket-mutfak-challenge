@@ -1,6 +1,11 @@
 const BASE_URL = 'http://localhost:4000';
 
-import { BasketEntity, CourierEntity, OrderEntity, OrderStatus } from '../types';
+import {
+  BasketEntity,
+  CourierEntity,
+  OrderEntity,
+  OrderStatus,
+} from '../types';
 
 export class API {
   // Orders
@@ -14,7 +19,9 @@ export class API {
     return response.json();
   }
 
-  static async createOrder(order: Omit<OrderEntity, 'id'>): Promise<OrderEntity> {
+  static async createOrder(
+    order: Omit<OrderEntity, 'id'>,
+  ): Promise<OrderEntity> {
     const response = await fetch(`${BASE_URL}/orders`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -23,7 +30,10 @@ export class API {
     return response.json();
   }
 
-  static async updateOrder(id: string, order: Partial<OrderEntity>): Promise<OrderEntity> {
+  static async updateOrder(
+    id: string,
+    order: Partial<OrderEntity>,
+  ): Promise<OrderEntity> {
     const response = await fetch(`${BASE_URL}/orders/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -32,7 +42,10 @@ export class API {
     return response.json();
   }
 
-  static async updateOrderStatus(id: string, status: OrderStatus): Promise<OrderEntity> {
+  static async updateOrderStatus(
+    id: string,
+    status: OrderStatus,
+  ): Promise<OrderEntity> {
     const response = await fetch(`${BASE_URL}/orders/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -41,7 +54,10 @@ export class API {
     return response.json();
   }
 
-  static async updateOrderBasket(id: string, basket_id: string | null): Promise<OrderEntity> {
+  static async updateOrderBasket(
+    id: string,
+    basket_id: string | null,
+  ): Promise<OrderEntity> {
     const response = await fetch(`${BASE_URL}/orders/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -81,7 +97,9 @@ export class API {
     return response.json();
   }
 
-  static async createBasket(basket: Omit<BasketEntity, 'id'>): Promise<BasketEntity> {
+  static async createBasket(
+    basket: Omit<BasketEntity, 'id'>,
+  ): Promise<BasketEntity> {
     const response = await fetch(`${BASE_URL}/baskets`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -90,7 +108,10 @@ export class API {
     return response.json();
   }
 
-  static async updateBasket(id: string, basket: Partial<BasketEntity>): Promise<BasketEntity> {
+  static async updateBasket(
+    id: string,
+    basket: Partial<BasketEntity>,
+  ): Promise<BasketEntity> {
     const response = await fetch(`${BASE_URL}/baskets/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -103,13 +124,19 @@ export class API {
     await fetch(`${BASE_URL}/baskets/${id}`, { method: 'DELETE' });
   }
 
-  static async addOrderToBasket(basket_id: string, order_id: string): Promise<BasketEntity> {
+  static async addOrderToBasket(
+    basket_id: string,
+    order_id: string,
+  ): Promise<BasketEntity> {
     const basket = await API.getBasket(basket_id);
     basket.orders.push(order_id);
     return API.updateBasket(basket_id, { orders: basket.orders });
   }
 
-  static async removeOrderFromBasket(basket_id: string, order_id: string): Promise<BasketEntity> {
+  static async removeOrderFromBasket(
+    basket_id: string,
+    order_id: string,
+  ): Promise<BasketEntity> {
     const basket = await API.getBasket(basket_id);
     basket.orders = basket.orders.filter((id) => id !== order_id);
     return API.updateBasket(basket_id, { orders: basket.orders });
@@ -132,7 +159,35 @@ export class API {
       }),
     ]);
 
-    const [basket, courier] = await Promise.all([basketResponse.json(), courierResponse.json()]);
+    const [basket, courier] = await Promise.all([
+      basketResponse.json(),
+      courierResponse.json(),
+    ]);
+
+    return { basket, courier };
+  }
+
+  static async removeCourierFromBasket(
+    basketId: string,
+    courierId: string,
+  ): Promise<{ basket: BasketEntity; courier: CourierEntity }> {
+    const [basketResponse, courierResponse] = await Promise.all([
+      fetch(`${BASE_URL}/baskets/${basketId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ courier_id: null }),
+      }),
+      fetch(`${BASE_URL}/couriers/${courierId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ basket_id: null }),
+      }),
+    ]);
+
+    const [basket, courier] = await Promise.all([
+      basketResponse.json(),
+      courierResponse.json(),
+    ]);
 
     return { basket, courier };
   }
