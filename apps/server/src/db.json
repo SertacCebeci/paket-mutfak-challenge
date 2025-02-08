@@ -3,17 +3,17 @@
     {
       "id": "1",
       "name": "Cemrehan Çavdar",
-      "status": "active"
+      "basket_id": "1"
     },
     {
       "id": "2",
       "name": "Yasin Beyazlı",
-      "status": "active"
+      "basket_id": "92b1"
     },
     {
       "id": "3",
       "name": "Duhan Günsel",
-      "status": "break"
+      "basket_id": null
     }
   ],
   "orders": [
@@ -29,7 +29,7 @@
         "name": "Köfteci Yusuf",
         "location": "Kadıköy"
       },
-      "status": "on_the_way",
+      "status": "delivered",
       "basket_id": "1",
       "items": [
         {
@@ -56,7 +56,7 @@
         "name": "Adana Ocakbaşı",
         "location": "Bağdat Caddesi"
       },
-      "status": "on_the_way",
+      "status": "delivered",
       "basket_id": "1",
       "items": [
         {
@@ -83,8 +83,8 @@
         "name": "Tavukçu Mehmet",
         "location": "Kadıköy"
       },
-      "status": "preparing",
-      "basket_id": null,
+      "status": "on_the_way",
+      "basket_id": "92b1",
       "items": [
         {
           "id": "5",
@@ -110,8 +110,8 @@
         "name": "Tavukçu Mehmet",
         "location": "Kadıköy"
       },
-      "status": "preparing",
-      "basket_id": null,
+      "status": "prepared",
+      "basket_id": "4f25",
       "items": [
         {
           "id": "5",
@@ -137,7 +137,7 @@
         "name": "Tavukçu Mehmet",
         "location": "Kadıköy"
       },
-      "status": "preparing",
+      "status": "prepared",
       "basket_id": null,
       "items": [
         {
@@ -157,10 +157,29 @@
     {
       "id": "1",
       "courier_id": "1",
-      "status": "on_the_way",
-      "orders": ["1", "2"],
+      "status": "delivered",
+      "orders": [
+        "1",
+        "2"
+      ],
       "created_at": "2024-12-24T23:45:00Z",
       "updated_at": "2024-12-24T23:50:00Z"
+    },
+    {
+      "id": "92b1",
+      "courier_id": "2",
+      "status": "on_the_way",
+      "orders": [
+        "3"
+      ]
+    },
+    {
+      "id": "4f25",
+      "courier_id": null,
+      "status": "prepared",
+      "orders": [
+        "4"
+      ]
     }
   ]
 }

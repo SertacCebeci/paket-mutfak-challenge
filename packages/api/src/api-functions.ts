@@ -16,6 +16,7 @@ export interface Order {
 export interface Courier {
   id: string;
   name: string;
+  basket_id: string | null;
 }
 
 export interface Basket {
@@ -88,6 +89,11 @@ export class API {
     return response.json();
   }
 
+  static async getAvailableCouriers(): Promise<Courier[]> {
+    const response = await fetch(`${BASE_URL}/couriers?basket_id=null`);
+    return response.json();
+  }
+
   // Baskets
   static async getBaskets(): Promise<Basket[]> {
     const response = await fetch(`${BASE_URL}/baskets`);
@@ -131,5 +137,55 @@ export class API {
     const basket = await API.getBasket(basket_id);
     basket.orders = basket.orders.filter((id) => id !== order_id);
     return API.updateBasket(basket_id, { orders: basket.orders });
+  }
+
+  static async assignCourierToBasket(basketId: string, courierId: string): Promise<{ basket: Basket; courier: Courier }> {
+    const [basketResponse, courierResponse] = await Promise.all([
+      fetch(`${BASE_URL}/baskets/${basketId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ courier_id: courierId }),
+      }),
+      fetch(`${BASE_URL}/couriers/${courierId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ basket_id: basketId }),
+      }),
+    ]);
+
+    const [basket, courier] = await Promise.all([
+      basketResponse.json(),
+      courierResponse.json(),
+    ]);
+
+    return { basket, courier };
+  }
+
+  static async markBasketAsDelivered(basketId: string): Promise<void> {
+    const basket = await API.getBasket(basketId);
+    if (!basket.courier_id) return;
+
+    await Promise.all([
+      // Update basket status
+      fetch(`${BASE_URL}/baskets/${basketId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'delivered' }),
+      }),
+      // Clear courier's basket_id
+      fetch(`${BASE_URL}/couriers/${basket.courier_id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ basket_id: null }),
+      }),
+      // Mark all orders as delivered
+      ...basket.orders.map(orderId =>
+        fetch(`${BASE_URL}/orders/${orderId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'delivered' }),
+        })
+      ),
+    ]);
   }
 }

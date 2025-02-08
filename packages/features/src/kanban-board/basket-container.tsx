@@ -10,7 +10,10 @@ interface BasketContainerProps {
 export const BasketContainer = ({ basket }: BasketContainerProps) => {
   const queryClient = useQueryClient();
   const { data: orders = [] } = useQuery({ queryKey: ['orders'], queryFn: API.getOrders });
-  const { data: couriers = [] } = useQuery({ queryKey: ['couriers'], queryFn: API.getCouriers });
+  const { data: availableCouriers = [] } = useQuery({ 
+    queryKey: ['availableCouriers'], 
+    queryFn: API.getAvailableCouriers 
+  });
 
   const ordersInBasket = orders.filter((order) => basket.orders.includes(order.id));
   const allOrdersDelivered = ordersInBasket.every(order => order.status === 'delivered');
@@ -62,6 +65,16 @@ export const BasketContainer = ({ basket }: BasketContainerProps) => {
     },
   });
 
+  const assignCourierMutation = useMutation({
+    mutationFn: (courierId: string) => 
+      API.assignCourierToBasket(basket.id, courierId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['baskets'] });
+      queryClient.invalidateQueries({ queryKey: ['couriers'] });
+      queryClient.invalidateQueries({ queryKey: ['availableCouriers'] });
+    },
+  });
+
   const renderActions = () => {
     if (basket.status === 'prepared') {
       return (
@@ -70,12 +83,12 @@ export const BasketContainer = ({ basket }: BasketContainerProps) => {
             style={{ width: 200 }}
             placeholder="Assign courier"
             value={basket.courier_id || undefined}
-            options={couriers.map(c => ({ 
+            options={availableCouriers.map(c => ({ 
               label: c.name, 
               value: c.id 
             }))}
             onChange={(value) => {
-              updateBasketMutation.mutate({ courier_id: value });
+              assignCourierMutation.mutate(value);
             }}
           />
           {basket.courier_id && ordersInBasket.length > 0 && (
