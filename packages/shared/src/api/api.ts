@@ -1,6 +1,6 @@
 const BASE_URL = 'http://localhost:4000';
 
-import { Basket, Courier, Order, OrderStatus } from "../types";
+import { Basket, Courier, Order, OrderStatus } from '../types';
 
 export class API {
   // Orders
@@ -115,7 +115,10 @@ export class API {
     return API.updateBasket(basket_id, { orders: basket.orders });
   }
 
-  static async assignCourierToBasket(basketId: string, courierId: string): Promise<{ basket: Basket; courier: Courier }> {
+  static async assignCourierToBasket(
+    basketId: string,
+    courierId: string,
+  ): Promise<{ basket: Basket; courier: Courier }> {
     const [basketResponse, courierResponse] = await Promise.all([
       fetch(`${BASE_URL}/baskets/${basketId}`, {
         method: 'PATCH',
@@ -129,10 +132,7 @@ export class API {
       }),
     ]);
 
-    const [basket, courier] = await Promise.all([
-      basketResponse.json(),
-      courierResponse.json(),
-    ]);
+    const [basket, courier] = await Promise.all([basketResponse.json(), courierResponse.json()]);
 
     return { basket, courier };
   }
@@ -150,10 +150,10 @@ export class API {
       fetch(`${BASE_URL}/baskets/${basketId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           status: 'delivered',
           courier_id: null,
-          delivered_by: currentCourierId
+          delivered_by: currentCourierId,
         }),
       }),
       // Clear courier's basket_id
@@ -163,16 +163,16 @@ export class API {
         body: JSON.stringify({ basket_id: null }),
       }),
       // Mark all orders as delivered
-      ...basket.orders.map(orderId =>
+      ...basket.orders.map((orderId) =>
         fetch(`${BASE_URL}/orders/${orderId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ status: 'delivered' }),
-        })
+        }),
       ),
     ]);
 
     // Ensure all requests were successful
-    await Promise.all(results.map(r => r.json()));
+    await Promise.all(results.map((r) => r.json()));
   }
 }

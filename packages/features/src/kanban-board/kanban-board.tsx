@@ -1,18 +1,18 @@
-import {  API } from '@paket/shared';
+import { API } from '@paket/shared';
 import { ColumnType, KanbanColumn } from './kanban-column';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 
 export const KanbanBoard: React.FC = () => {
   const { data: orders = [] } = useQuery({
-    queryKey: ["orders"],
-    queryFn: API.getOrders
+    queryKey: ['orders'],
+    queryFn: API.getOrders,
   });
 
   const { data: baskets = [] } = useQuery({
-    queryKey: ["baskets"],
-    queryFn: API.getBaskets
-  })
+    queryKey: ['baskets'],
+    queryFn: API.getBaskets,
+  });
 
   const columns: { type: ColumnType }[] = [
     {

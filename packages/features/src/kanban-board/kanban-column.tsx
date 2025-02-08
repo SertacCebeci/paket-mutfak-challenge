@@ -14,14 +14,14 @@ interface ColumnProps {
   baskets: Basket[];
 }
 
-const ColumnHeader: React.FC<{ 
-  type: ColumnType; 
+const ColumnHeader: React.FC<{
+  type: ColumnType;
   orderCount: number;
   basketCount?: number;
   onSortChange: (option: SortOption, direction: SortDirection) => void;
 }> = ({ type, orderCount, basketCount, onSortChange }) => {
   const title = type === 'preparing' ? 'Preparing' : type === 'on_shelf' ? 'On The Shelf' : 'On The Way';
-  
+
   const sortOptions = {
     preparing: [
       { label: 'Preparation Time ↑', value: 'time_asc' },
@@ -46,7 +46,9 @@ const ColumnHeader: React.FC<{
   return (
     <div className="flex items-center justify-between mb-4">
       <div>
-        <Typography.Title level={4} className="mb-0">{title}</Typography.Title>
+        <Typography.Title level={4} className="mb-0">
+          {title}
+        </Typography.Title>
         <Typography.Text type="secondary">
           {orderCount} Orders {basketCount ? `in ${basketCount} Baskets` : ''}
         </Typography.Text>
@@ -83,8 +85,8 @@ const BasketRenderer: React.FC<{ columnType: ColumnType; baskets: Basket[] }> = 
   );
 };
 
-const OrderRenderer: React.FC<{ 
-  columnType: ColumnType; 
+const OrderRenderer: React.FC<{
+  columnType: ColumnType;
   orders: Order[];
   sortOption: SortOption;
   sortDirection: SortDirection;
@@ -104,7 +106,7 @@ const OrderRenderer: React.FC<{
       case 'time':
         return (new Date(a.delivery_time).getTime() - new Date(b.delivery_time).getTime()) * multiplier;
       case 'address':
-        return (a.address.localeCompare(b.address)) * multiplier;
+        return a.address.localeCompare(b.address) * multiplier;
       default:
         return 0;
     }
@@ -128,13 +130,13 @@ export const KanbanColumn: React.FC<ColumnProps> = ({ type, orders, baskets }) =
     setSortDirection(direction);
   };
 
-  const filteredOrders = orders.filter(order => {
+  const filteredOrders = orders.filter((order) => {
     if (type === 'preparing') return order.status === 'preparing';
     if (type === 'on_shelf') return order.status === 'prepared' && !order.basket_id;
     return false;
   });
 
-  const filteredBaskets = baskets.filter(basket => {
+  const filteredBaskets = baskets.filter((basket) => {
     if (type === 'on_shelf') return basket.status === 'prepared';
     if (type === 'on_the_way') return basket.status === 'on_the_way';
     return false;
@@ -142,19 +144,14 @@ export const KanbanColumn: React.FC<ColumnProps> = ({ type, orders, baskets }) =
 
   return (
     <div className="bg-gray-100 p-4 rounded-lg">
-      <ColumnHeader 
-        type={type} 
+      <ColumnHeader
+        type={type}
         orderCount={filteredOrders.length}
         basketCount={filteredBaskets.length || undefined}
         onSortChange={handleSortChange}
       />
       <BasketRenderer columnType={type} baskets={baskets} />
-      <OrderRenderer 
-        columnType={type} 
-        orders={orders} 
-        sortOption={sortOption}
-        sortDirection={sortDirection}
-      />
+      <OrderRenderer columnType={type} orders={orders} sortOption={sortOption} sortDirection={sortDirection} />
     </div>
   );
 };

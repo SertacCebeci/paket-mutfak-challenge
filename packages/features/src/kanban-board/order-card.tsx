@@ -1,11 +1,11 @@
 import { Card, Typography, Tag, Select, Button, Tooltip, Space, Divider } from 'antd';
-import { 
-  ClockCircleOutlined, 
-  EnvironmentOutlined, 
+import {
+  ClockCircleOutlined,
+  EnvironmentOutlined,
   CreditCardOutlined,
   ShopOutlined,
   CheckCircleOutlined,
-  LoadingOutlined
+  LoadingOutlined,
 } from '@ant-design/icons';
 import { API, Order, OrderStatus } from '@paket/shared';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -19,7 +19,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   const { data: baskets = [] } = useQuery({ queryKey: ['baskets'], queryFn: API.getBaskets });
 
   const updateOrderMutation = useMutation({
-    mutationFn: (variables: { id: string; status: OrderStatus }) => 
+    mutationFn: (variables: { id: string; status: OrderStatus }) =>
       API.updateOrderStatus(variables.id, variables.status),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['orders'] });
@@ -69,11 +69,16 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
 
   const getStatusColor = (status: OrderStatus) => {
     switch (status) {
-      case 'preparing': return 'processing';
-      case 'prepared': return 'warning';
-      case 'on_the_way': return 'blue';
-      case 'delivered': return 'success';
-      default: return 'default';
+      case 'preparing':
+        return 'processing';
+      case 'prepared':
+        return 'warning';
+      case 'on_the_way':
+        return 'blue';
+      case 'delivered':
+        return 'success';
+      default:
+        return 'default';
     }
   };
 
@@ -82,7 +87,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
       const deliveryTime = new Date(order.delivery_time);
       const timeLeft = deliveryTime.getTime() - Date.now();
       const minutesLeft = Math.floor(timeLeft / 1000 / 60);
-      
+
       return (
         <Tooltip title="Time until delivery">
           <Tag icon={<ClockCircleOutlined />} color={minutesLeft < 30 ? 'red' : 'blue'}>
@@ -105,11 +110,8 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
         </Tag>
         {renderTimer()}
       </Space>
-      
-      <Typography.Paragraph 
-        ellipsis={{ rows: 2 }} 
-        className="mb-0"
-      >
+
+      <Typography.Paragraph ellipsis={{ rows: 2 }} className="mb-0">
         <EnvironmentOutlined className="mr-1" />
         {order.address}
       </Typography.Paragraph>
@@ -140,7 +142,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
 
     if (order.status === 'preparing') {
       return (
-        <Button 
+        <Button
           type="primary"
           icon={<LoadingOutlined />}
           onClick={() => updateOrderMutation.mutate({ id: order.id, status: 'prepared' })}
@@ -151,7 +153,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
     }
 
     if (order.status === 'prepared' && !order.basket_id) {
-      const preparedBaskets = baskets.filter(b => b.status === 'prepared');
+      const preparedBaskets = baskets.filter((b) => b.status === 'prepared');
       return (
         <Space>
           <Select
@@ -159,22 +161,25 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
             placeholder="Select basket"
             options={[
               { label: '+ Create new basket', value: 'new' },
-              ...preparedBaskets.map(b => ({ 
-                label: `Basket #${b.id}`, 
-                value: b.id 
-              }))
+              ...preparedBaskets.map((b) => ({
+                label: `Basket #${b.id}`,
+                value: b.id,
+              })),
             ]}
           />
-          <Button type="primary" onClick={() => {
-            const selectElement = document.querySelector('.ant-select-selection-item') as HTMLElement;
-            const selectedValue = selectElement?.innerText;
-            if (selectedValue === '+ Create new basket') {
-              createBasketMutation.mutate();
-            } else {
-              const selectedOption = selectElement?.parentElement?.getAttribute('title');
-              addToBasketMutation.mutate(selectedOption as string);
-            }
-          }}>
+          <Button
+            type="primary"
+            onClick={() => {
+              const selectElement = document.querySelector('.ant-select-selection-item') as HTMLElement;
+              const selectedValue = selectElement?.innerText;
+              if (selectedValue === '+ Create new basket') {
+                createBasketMutation.mutate();
+              } else {
+                const selectedOption = selectElement?.parentElement?.getAttribute('title');
+                addToBasketMutation.mutate(selectedOption as string);
+              }
+            }}
+          >
             Add to Basket
           </Button>
         </Space>
@@ -183,10 +188,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
 
     if (order.basket_id && order.status === 'prepared') {
       return (
-        <Button 
-          danger
-          onClick={() => removeFromBasketMutation.mutate()}
-        >
+        <Button danger onClick={() => removeFromBasketMutation.mutate()}>
           Remove from Basket
         </Button>
       );
@@ -196,23 +198,21 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   };
 
   return (
-    <Card 
-      size="small" 
+    <Card
+      size="small"
       className="mb-2 hover:shadow-md transition-all"
       title={
         <div className="flex justify-between items-center">
           <Space>
             <Typography.Text strong>Order #{order.id}</Typography.Text>
-            <Tag color={getStatusColor(order.status)}>
-              {order.status.replace('_', ' ').toUpperCase()}
-            </Tag>
+            <Tag color={getStatusColor(order.status)}>{order.status.replace('_', ' ').toUpperCase()}</Tag>
           </Space>
         </div>
       }
       actions={[
         <div key="actions" className="px-4 py-2">
           {renderOrderActions()}
-        </div>
+        </div>,
       ]}
     >
       {renderOrderInfo()}

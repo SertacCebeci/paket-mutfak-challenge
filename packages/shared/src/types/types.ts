@@ -1,7 +1,6 @@
 export type OrderStatus = 'preparing' | 'prepared' | 'on_the_way' | 'delivered';
 export type BasketStatus = 'prepared' | 'on_the_way' | 'delivered';
 
-
 interface Restaurant {
   id: string;
   name: string;

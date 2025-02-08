@@ -1,10 +1,13 @@
 # Courier Chef Order Management System
+
 Product Requirements Document (PRD)
 
 ## Product Overview
+
 The Courier Chef Order Management System is a specialized application designed for kitchen staff to efficiently manage food delivery orders, organize them into delivery groups (baskets), and coordinate with delivery couriers. The system uses a Kanban-style interface to visualize and manage the entire order fulfillment process.
 
 ## Business Objectives
+
 1. Streamline the order preparation and delivery process in commercial kitchens
 2. Optimize courier efficiency by enabling logical grouping of orders
 3. Provide real-time visibility into order status and courier assignments
@@ -14,6 +17,7 @@ The Courier Chef Order Management System is a specialized application designed f
 ## Core Entities
 
 ### Orders
+
 - **Definition**: Individual customer orders containing one or more food items
 - **Attributes**:
   - Unique ID
@@ -28,6 +32,7 @@ The Courier Chef Order Management System is a specialized application designed f
   - Order time
 
 ### Baskets
+
 - **Definition**: Logical grouping of orders for efficient delivery
 - **Attributes**:
   - Unique ID
@@ -46,6 +51,7 @@ The Courier Chef Order Management System is a specialized application designed f
     - assigned courier's basket_id is set to null
 
 ### Couriers
+
 - **Definition**: Delivery personnel responsible for delivering order baskets
 - **Attributes**:
   - Unique ID
@@ -62,10 +68,13 @@ The Courier Chef Order Management System is a specialized application designed f
 ## User Interface
 
 ### Layout
+
 The interface follows a Kanban board design with three main columns, each featuring order count and sorting capabilities:
 
 #### Column Header Structure
+
 Each column header contains:
+
 - Column title
 - Order count indicator showing total number of contained orders
 - Sorting controls with options for:
@@ -75,6 +84,7 @@ Each column header contains:
   - Delivery address (alphabetical)
 
 #### 1. Preparing Column
+
 - **Content**: Individual orders in preparation
 - **Count Display**: Shows total number of orders being prepared
 - **Display Elements**:
@@ -92,10 +102,11 @@ Each column header contains:
   - By restaurant name
 
 #### 2. On the Shelf Column
+
 - **Organization**: Two sections
   - Top: Active baskets
   - Bottom: Unassigned prepared orders
-- **Count Display**: 
+- **Count Display**:
   - Total orders in the column
   - Breakdown of basketed vs unbasked orders
 - **Display Elements for Orders**:
@@ -118,8 +129,9 @@ Each column header contains:
   - By restaurant name
 
 #### 3. On The Way Column
+
 - **Content**: Active delivery baskets
-- **Count Display**: 
+- **Count Display**:
   - Total orders in delivery
   - Active couriers count
 - **Display Elements**:
@@ -136,6 +148,7 @@ Each column header contains:
   - By number of orders in basket
 
 ### Top Navigation
+
 - Application title
 - Global order count display showing total orders in system
 - Search functionality with fuzzy search capability for orders
@@ -143,11 +156,14 @@ Each column header contains:
 ## Core Functionality
 
 ### Order Management
+
 1. **Order Creation**
+
    - Orders enter the system in "preparing" status
    - Automatically appear in Preparing column
 
 2. **Order Preparation**
+
    - Kitchen staff can mark orders as "prepared"
    - Prepared orders move to On the Shelf column
 
@@ -158,11 +174,14 @@ Each column header contains:
    - Orders can be removed from baskets if status is "prepared"
 
 ### Basket Management
+
 1. **Basket Creation Rules**
+
    - Can be created with one or more orders
    - Orders should have proximate delivery addresses
 
 2. **Courier Assignment**
+
    - Baskets can only be assigned to couriers with null basket_id
    - Assignment process:
      1. System checks courier availability (basket_id is null)
@@ -175,7 +194,9 @@ Each column header contains:
    - on_the_way → delivered (all orders must be delivered, automatically nullifies courier's basket_id)
 
 ### Delivery Management
+
 1. **Basket Delivery**
+
    - Baskets in "On The Way" status cannot be modified
    - Individual orders marked as delivered
    - When basket is marked as delivered:
@@ -191,6 +212,7 @@ Each column header contains:
 ## Additional Notes on Column Management
 
 ### Column Order Persistence
+
 - Column sorting preferences are preserved between sessions
 - Each column maintains independent sorting preferences
 - Default sorting can be configured per column:
@@ -199,6 +221,7 @@ Each column header contains:
   - On The Way: By delivery time
 
 ### Column Order Behavior
+
 - Sort indicators visually show current sort direction
 - Secondary sort options available for tie-breaking
 - Sorting applies to:
@@ -207,6 +230,7 @@ Each column header contains:
   - Baskets in On The Way column
 
 ### Performance Considerations
+
 - Client-side sorting for immediate response
 - Debounced sort operations for large datasets
 - Optimized re-rendering for sort operations
@@ -214,24 +238,29 @@ Each column header contains:
 ## Technical Requirements
 
 ### Frontend Technologies
+
 - React as primary framework
 - Optional integration with:
   - Ant Design for UI components
   - React Query for data management
 
 ### Backend Integration
+
 - RESTful API integration
 - JSON Server for development/testing
 
 ## Technical Considerations for Courier Management
 
 ### Data Consistency
+
 1. **Atomic Operations**
+
    - Courier assignment must update both basket and courier records atomically
    - Database transactions should ensure data consistency
    - Optimistic locking to prevent concurrent assignment conflicts
 
 2. **Status Validation**
+
    - Regular validation of courier-basket relationships
    - Automated cleanup of inconsistent states
    - Logging of all status changes for audit purposes
@@ -244,11 +273,14 @@ Each column header contains:
 ## Optional Enhancements
 
 ### User Experience
+
 1. **Context Menus**
+
    - Quick actions for orders
    - Courier assignment shortcuts
 
 2. **Animations and Transitions**
+
    - Status change animations
    - Basket creation/deletion effects
    - Hover states and interactive feedback
@@ -259,7 +291,9 @@ Each column header contains:
    - Courier assignment confirmations
 
 ### Additional Features
+
 1. **Completed Orders Column**
+
    - Historical view of delivered orders
    - Delivery performance metrics
 
@@ -269,6 +303,7 @@ Each column header contains:
    - Customer contact information
 
 ## Success Metrics
+
 1. Order processing time
 2. Average basket creation time
 3. Delivery efficiency
@@ -276,6 +311,7 @@ Each column header contains:
 5. User satisfaction metrics
 
 ## Documentation Requirements
+
 1. README file with:
    - Project setup instructions
    - Running instructions
