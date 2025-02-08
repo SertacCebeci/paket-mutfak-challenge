@@ -1,4 +1,5 @@
-import { Card, Typography, Tag, Select, Button } from 'antd';
+import { Card, Typography, Tag, Select, Button, Tooltip } from 'antd';
+import { ClockCircleOutlined, EnvironmentOutlined, CreditCardOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient, API, Order, OrderStatus } from '@paket/api';
 
 interface OrderCardProps {
@@ -56,6 +57,23 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
       queryClient.invalidateQueries({ queryKey: ['orders'] });
     },
   });
+
+  const renderTimer = () => {
+    if (order.status === 'preparing') {
+      const deliveryTime = new Date(order.delivery_time);
+      const timeLeft = deliveryTime.getTime() - Date.now();
+      const minutesLeft = Math.floor(timeLeft / 1000 / 60);
+      
+      return (
+        <Tooltip title="Time until delivery">
+          <Tag icon={<ClockCircleOutlined />} color={minutesLeft < 30 ? 'red' : 'blue'}>
+            {minutesLeft}m
+          </Tag>
+        </Tooltip>
+      );
+    }
+    return null;
+  };
 
   const renderActions = () => {
     // Orders in on_the_way status can only be marked as delivered
@@ -128,17 +146,33 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
       className="mb-2 shadow-sm hover:shadow-md transition-shadow bg-white"
       title={
         <div className="flex justify-between items-center">
-          <Typography.Text strong>#{order.id}</Typography.Text>
+          <div className="flex items-center gap-2">
+            <Typography.Text strong>#{order.id}</Typography.Text>
+            {renderTimer()}
+          </div>
           {renderActions()}
         </div>
       }
     >
-      <Typography.Text type="secondary" className="truncate block">
-        {order.items.map((item) => item.name).join(', ')}
-      </Typography.Text>
-      <Typography.Text type="secondary" className="truncate block mt-2">
-        {order.address}
-      </Typography.Text>
+      <div className="space-y-2">
+        <Typography.Text type="secondary" className="block">
+          <div className="flex items-center gap-1">
+            <EnvironmentOutlined />
+            <span className="truncate">{order.address}</span>
+          </div>
+        </Typography.Text>
+        <Typography.Text type="secondary" className="block">
+          <div className="flex items-center gap-1">
+            <CreditCardOutlined />
+            {order.payment}
+          </div>
+        </Typography.Text>
+        <div className="flex flex-wrap gap-1">
+          {order.items.map((item) => (
+            <Tag key={item.id}>{item.name}</Tag>
+          ))}
+        </div>
+      </div>
     </Card>
   );
 };

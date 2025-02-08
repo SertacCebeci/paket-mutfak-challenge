@@ -36,15 +36,23 @@ The Courier Chef Order Management System is a specialized application designed f
   - Array of order IDs
 - **Business Rules**:
   - Must contain at least one order
-  - Can only be assigned to one courier
+  - Can only be assigned to one courier through a one-to-one relationship
   - Must contain orders with geographically proximate delivery addresses
+  - When assigned to a courier, the courier's basket_id is updated to match this basket's ID
 
 ### Couriers
 - **Definition**: Delivery personnel responsible for delivering order baskets
 - **Attributes**:
   - Unique ID
   - Name
-  - Current status
+  - Basket ID (nullable)
+- **Business Rules**:
+  - Can only be assigned to one basket at a time through basket_id
+  - Courier availability is determined by basket_id:
+    - If basket_id is null: Courier is available for delivery
+    - If basket_id is not null: Courier is currently delivering that basket
+  - When assigned to a basket, both the basket's courier_id and the courier's basket_id must be updated atomically
+  - When a basket is marked as delivered, the courier's basket_id is automatically set to null
 
 ## User Interface
 
@@ -92,10 +100,11 @@ Each column header contains:
   - Basket ID
   - Contained orders
   - Courier assignment status
+  - Available couriers dropdown (shows only couriers with null basket_id)
 - **Actions**:
   - Create new basket
   - Add/remove orders from baskets
-  - Assign courier to basket
+  - Assign available courier to basket
   - Delete basket
   - Move basket to "On The Way"
 - **Sorting Options**:
@@ -107,15 +116,15 @@ Each column header contains:
 - **Content**: Active delivery baskets
 - **Count Display**: 
   - Total orders in delivery
-  - Orders per courier
+  - Active couriers count
 - **Display Elements**:
   - Basket information
-  - Assigned courier
+  - Assigned courier name
   - Contained orders
   - Delivery status
 - **Actions**:
   - Mark orders as delivered
-  - Mark basket as delivered (when all orders complete)
+  - Mark basket as delivered (automatically frees assigned courier)
 - **Sorting Options**:
   - By courier name
   - By delivery time
@@ -149,22 +158,30 @@ Each column header contains:
    - Orders should have proximate delivery addresses
 
 2. **Courier Assignment**
-   - Baskets must be assigned a courier before moving to "On The Way"
-   - Courier assignment is final once basket is "On The Way"
+   - Baskets can only be assigned to couriers with null basket_id
+   - Assignment process:
+     1. System checks courier availability (basket_id is null)
+     2. Updates basket's courier_id and courier's basket_id in a single transaction
+     3. Only after successful assignment can basket move to "On The Way" status
+   - Assignment is final once basket is "On The Way"
 
 3. **Basket State Transitions**
    - prepared → on_the_way (requires courier assignment)
-   - on_the_way → delivered (all orders must be delivered)
+   - on_the_way → delivered (all orders must be delivered, automatically nullifies courier's basket_id)
 
 ### Delivery Management
 1. **Basket Delivery**
    - Baskets in "On The Way" status cannot be modified
    - Individual orders marked as delivered
-   - Basket automatically marked as delivered when all orders complete
+   - When basket is marked as delivered:
+     1. All contained orders are marked as delivered
+     2. Assigned courier's basket_id is set to null
+     3. Basket is removed from active view
 
 2. **Status Updates**
    - Similar to real-time (polled) updates for order status changes
    - Automatic removal of completed baskets
+   - Real-time updates of courier availability status
 
 ## Additional Notes on Column Management
 
@@ -200,6 +217,24 @@ Each column header contains:
 ### Backend Integration
 - RESTful API integration
 - JSON Server for development/testing
+
+## Technical Considerations for Courier Management
+
+### Data Consistency
+1. **Atomic Operations**
+   - Courier assignment must update both basket and courier records atomically
+   - Database transactions should ensure data consistency
+   - Optimistic locking to prevent concurrent assignment conflicts
+
+2. **Status Validation**
+   - Regular validation of courier-basket relationships
+   - Automated cleanup of inconsistent states
+   - Logging of all status changes for audit purposes
+
+3. **API Requirements**
+   - Endpoint for checking courier availability
+   - Combined endpoint for courier-basket assignment
+   - Status update notifications for courier availability changes
 
 ## Optional Enhancements
 

@@ -2,15 +2,18 @@
   "couriers": [
     {
       "id": "1",
-      "name": "Cemrehan Çavdar"
+      "name": "Cemrehan Çavdar",
+      "status": "active"
     },
     {
       "id": "2",
-      "name": "Yasin Beyazlı"
+      "name": "Yasin Beyazlı",
+      "status": "active"
     },
     {
       "id": "3",
-      "name": "Duhan Günsel"
+      "name": "Duhan Günsel",
+      "status": "break"
     }
   ],
   "orders": [
@@ -19,16 +22,25 @@
       "address": "Kadıköy, İstanbul, Turkey, Sahte Sokak, No: 123 Daire: 4",
       "payment": "Credit Card",
       "delivery_time": "2024-12-24T23:59:59Z",
+      "order_time": "2024-12-24T23:30:00Z",
+      "preparation_time": 20,
+      "restaurant": {
+        "id": "rest_1",
+        "name": "Köfteci Yusuf",
+        "location": "Kadıköy"
+      },
       "status": "on_the_way",
       "basket_id": "1",
       "items": [
         {
           "id": "1",
-          "name": "Şerifali Köfte"
+          "name": "Şerifali Köfte",
+          "preparation_time": 15
         },
         {
           "id": "2",
-          "name": "Mercimek Çorbası"
+          "name": "Mercimek Çorbası",
+          "preparation_time": 5
         }
       ]
     },
@@ -37,70 +49,106 @@
       "address": "Bağdat Caddesi, Bağdat Sokak, No: 1, Daire: 1, Kadıköy, İstanbul",
       "payment": "Cash",
       "delivery_time": "2024-12-25T12:00:00Z",
+      "order_time": "2024-12-25T11:30:00Z",
+      "preparation_time": 25,
+      "restaurant": {
+        "id": "rest_2",
+        "name": "Adana Ocakbaşı",
+        "location": "Bağdat Caddesi"
+      },
       "status": "on_the_way",
       "basket_id": "1",
       "items": [
         {
           "id": "3",
-          "name": "Adana Kebap"
+          "name": "Adana Kebap",
+          "preparation_time": 20
         },
         {
           "id": "4",
-          "name": "Baklava"
+          "name": "Baklava",
+          "preparation_time": 5
         }
       ]
     },
     {
       "id": "3",
-      "address": "Kadıköy, İstanbul, Turkey,  Başka bir Sok, No: 456 Bina: 7 Daire: 8 Bina Adı: Uzun Apartmanı",
+      "address": "Kadıköy, İstanbul, Turkey, Başka bir Sok, No: 456 Bina: 7 Daire: 8 Bina Adı: Uzun Apartmanı",
       "payment": "Credit Card",
+      "delivery_time": "2024-12-26T23:59:59Z",
+      "order_time": "2024-12-26T23:30:00Z",
+      "preparation_time": 15,
+      "restaurant": {
+        "id": "rest_3",
+        "name": "Tavukçu Mehmet",
+        "location": "Kadıköy"
+      },
       "status": "preparing",
       "basket_id": null,
-      "delivery_time": "2024-12-26T23:59:59Z",
       "items": [
         {
           "id": "5",
-          "name": "Tavuklu Salata"
+          "name": "Tavuklu Salata",
+          "preparation_time": 10
         },
         {
           "id": "6",
-          "name": "Ayran"
+          "name": "Ayran",
+          "preparation_time": 5
         }
       ]
     },
     {
       "id": "4",
-      "address": "Kadıköy, İstanbul, Turkey,  Başka bir Sok, No: 456 Bina: 7 Daire: 8 Bina Adı: Uzun Apartmanı",
+      "address": "Kadıköy, İstanbul, Turkey, Başka bir Sok, No: 456 Bina: 7 Daire: 8 Bina Adı: Uzun Apartmanı",
       "payment": "Credit Card",
+      "delivery_time": "2024-12-26T23:59:59Z",
+      "order_time": "2024-12-26T23:30:00Z",
+      "preparation_time": 20,
+      "restaurant": {
+        "id": "rest_3",
+        "name": "Tavukçu Mehmet",
+        "location": "Kadıköy"
+      },
       "status": "preparing",
       "basket_id": null,
-      "delivery_time": "2024-12-26T23:59:59Z",
       "items": [
         {
           "id": "5",
-          "name": "Havuçlu Salata"
+          "name": "Havuçlu Salata",
+          "preparation_time": 15
         },
         {
           "id": "6",
-          "name": "Yayık ayran"
+          "name": "Yayık ayran",
+          "preparation_time": 5
         }
       ]
     },
     {
       "id": "5",
-      "address": "Kadıköy, İstanbul, Turkey,  Başka bir Sok, No: 456 Bina: 7 Daire: 8 Bina Adı: Uzun Apartmanı",
+      "address": "Kadıköy, İstanbul, Turkey, Başka bir Sok, No: 456 Bina: 7 Daire: 8 Bina Adı: Uzun Apartmanı",
       "payment": "Credit Card",
+      "delivery_time": "2024-12-26T23:59:59Z",
+      "order_time": "2024-12-26T23:30:00Z",
+      "preparation_time": 25,
+      "restaurant": {
+        "id": "rest_3",
+        "name": "Tavukçu Mehmet",
+        "location": "Kadıköy"
+      },
       "status": "preparing",
       "basket_id": null,
-      "delivery_time": "2024-12-26T23:59:59Z",
       "items": [
         {
           "id": "5",
-          "name": "Havuçlu Tavuklu Salata"
+          "name": "Havuçlu Tavuklu Salata",
+          "preparation_time": 20
         },
         {
           "id": "6",
-          "name": "Yayılmış ayran"
+          "name": "Yayılmış ayran",
+          "preparation_time": 5
         }
       ]
     }
@@ -110,7 +158,9 @@
       "id": "1",
       "courier_id": "1",
       "status": "on_the_way",
-      "orders": ["1", "2"]
+      "orders": ["1", "2"],
+      "created_at": "2024-12-24T23:45:00Z",
+      "updated_at": "2024-12-24T23:50:00Z"
     }
   ]
 }
