@@ -36,16 +36,20 @@ export const BasketContainer = ({ basket }: BasketContainerProps) => {
         );
       }
 
-      // If all orders are delivered, automatically mark basket as delivered
+      // If all orders are delivered, mark basket as delivered
       if (allOrdersDelivered) {
-        variables.status = 'delivered';
+        await API.markBasketAsDelivered(basket.id);
+        return basket;
       }
 
       return API.updateBasket(basket.id, variables);
     },
     onSuccess: () => {
+      // Invalidate all relevant queries
       queryClient.invalidateQueries({ queryKey: ['baskets'] });
       queryClient.invalidateQueries({ queryKey: ['orders'] });
+      queryClient.invalidateQueries({ queryKey: ['couriers'] });
+      queryClient.invalidateQueries({ queryKey: ['availableCouriers'] });
     },
   });
 

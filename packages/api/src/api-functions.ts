@@ -168,7 +168,7 @@ export class API {
 
     const currentCourierId = basket.courier_id;
 
-    await Promise.all([
+    const results = await Promise.all([
       // Update basket status and courier information
       fetch(`${BASE_URL}/baskets/${basketId}`, {
         method: 'PATCH',
@@ -194,5 +194,8 @@ export class API {
         })
       ),
     ]);
+
+    // Ensure all requests were successful
+    await Promise.all(results.map(r => r.json()));
   }
 }
