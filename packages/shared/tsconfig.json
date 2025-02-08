@@ -2,7 +2,9 @@
   "extends": "@paket/typescript-config/react-library.json",
   "compilerOptions": {
     "allowImportingTsExtensions": true,
-    "noEmit": true
+    "noEmit": true,
+    "moduleResolution": "bundler",
+    "module": "Preserve"
   },
   "include": ["src"],
   "exclude": ["node_modules"]

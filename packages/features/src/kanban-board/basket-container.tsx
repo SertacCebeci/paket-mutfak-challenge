@@ -6,7 +6,7 @@ import {
   DeleteOutlined,
   SendOutlined
 } from '@ant-design/icons';
-import { useMutation, useQuery, useQueryClient,  API, Basket } from '@paket/api';
+import { useMutation, useQuery, useQueryClient,  API, Basket } from '@paket/shared';
 import { OrderCard } from './order-card';
 import React from 'react';
 

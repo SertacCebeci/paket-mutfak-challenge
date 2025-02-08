@@ -9,11 +9,13 @@
     "lint": "eslint .",
     "preview": "vite preview"
   },
+  "peerDependencies": {
+    "react": "^18",
+    "react-dom": "^18"
+  },
   "dependencies": {
-    "@paket/api": "workspace:*",
-    "@paket/features": "workspace:*",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "@paket/shared": "workspace:*",
+    "@paket/features": "workspace:*"
   },
   "devDependencies": {
     "@paket/eslint-config": "workspace:*",

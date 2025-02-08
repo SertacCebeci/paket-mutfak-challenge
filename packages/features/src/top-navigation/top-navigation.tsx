@@ -1,6 +1,5 @@
 import { Input } from 'antd';
-import { useQuery } from '@paket/api';
-import { API } from '@paket/api';
+import { useQuery, API } from '@paket/shared';
 import { SearchOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import Fuse from 'fuse.js';

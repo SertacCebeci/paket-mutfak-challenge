@@ -1,6 +1,6 @@
 'use client';
 
-import { QueryClientProvider, QueryClient, ReactQueryDevtools } from '@paket/api';
+import { QueryClientProvider, QueryClient, ReactQueryDevtools } from '@paket/shared';
 import { useState } from 'react';
 
 export const ReactQueryProvider = ({ children }: { children: React.ReactNode }) => {

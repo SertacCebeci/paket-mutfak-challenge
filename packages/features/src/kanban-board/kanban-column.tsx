@@ -1,6 +1,6 @@
 import { OrderCard } from './order-card';
 import { BasketContainer } from './basket-container';
-import { Basket, Order } from '@paket/api';
+import { Basket, Order } from '@paket/shared';
 import { Select, Typography } from 'antd';
 import { useState } from 'react';
 

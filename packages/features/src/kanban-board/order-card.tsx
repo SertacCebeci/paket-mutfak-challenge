@@ -7,7 +7,7 @@ import {
   CheckCircleOutlined,
   LoadingOutlined
 } from '@ant-design/icons';
-import { useMutation, useQuery, useQueryClient, API, Order, OrderStatus } from '@paket/api';
+import { useMutation, useQuery, useQueryClient, API, Order, OrderStatus } from '@paket/shared';
 
 interface OrderCardProps {
   order: Order;

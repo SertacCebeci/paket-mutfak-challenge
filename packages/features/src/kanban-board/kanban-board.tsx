@@ -1,4 +1,4 @@
-import { useQuery, API } from '@paket/api';
+import { useQuery, API } from '@paket/shared';
 import { ColumnType, KanbanColumn } from './kanban-column';
 import React from 'react';
 
