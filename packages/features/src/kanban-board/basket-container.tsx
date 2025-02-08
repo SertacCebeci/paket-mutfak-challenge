@@ -1,6 +1,7 @@
 import { Card, Select, Button } from 'antd';
 import { useMutation, useQuery, useQueryClient,  API, Basket } from '@paket/api';
 import { OrderCard } from './order-card';
+import React from 'react';
 
 interface BasketContainerProps {
   basket: Basket;
@@ -13,6 +14,13 @@ export const BasketContainer = ({ basket }: BasketContainerProps) => {
 
   const ordersInBasket = orders.filter((order) => basket.orders.includes(order.id));
   const allOrdersDelivered = ordersInBasket.every(order => order.status === 'delivered');
+
+  // Effect to automatically mark basket as delivered when all orders are delivered
+  React.useEffect(() => {
+    if (basket.status === 'on_the_way' && allOrdersDelivered) {
+      updateBasketMutation.mutate({ status: 'delivered' });
+    }
+  }, [allOrdersDelivered]);
 
   const updateBasketMutation = useMutation({
     mutationFn: async (variables: Partial<Basket>) => {

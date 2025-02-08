@@ -19,7 +19,7 @@
       "address": "Kadıköy, İstanbul, Turkey, Sahte Sokak, No: 123 Daire: 4",
       "payment": "Credit Card",
       "delivery_time": "2024-12-24T23:59:59Z",
-      "status": "delivered",
+      "status": "on_the_way",
       "basket_id": "1",
       "items": [
         {
@@ -37,7 +37,7 @@
       "address": "Bağdat Caddesi, Bağdat Sokak, No: 1, Daire: 1, Kadıköy, İstanbul",
       "payment": "Cash",
       "delivery_time": "2024-12-25T12:00:00Z",
-      "status": "delivered",
+      "status": "on_the_way",
       "basket_id": "1",
       "items": [
         {
@@ -54,8 +54,8 @@
       "id": "3",
       "address": "Kadıköy, İstanbul, Turkey,  Başka bir Sok, No: 456 Bina: 7 Daire: 8 Bina Adı: Uzun Apartmanı",
       "payment": "Credit Card",
-      "status": "delivered",
-      "basket_id": "e603",
+      "status": "preparing",
+      "basket_id": null,
       "delivery_time": "2024-12-26T23:59:59Z",
       "items": [
         {
@@ -72,8 +72,8 @@
       "id": "4",
       "address": "Kadıköy, İstanbul, Turkey,  Başka bir Sok, No: 456 Bina: 7 Daire: 8 Bina Adı: Uzun Apartmanı",
       "payment": "Credit Card",
-      "status": "on_the_way",
-      "basket_id": "b489",
+      "status": "preparing",
+      "basket_id": null,
       "delivery_time": "2024-12-26T23:59:59Z",
       "items": [
         {
@@ -90,7 +90,7 @@
       "id": "5",
       "address": "Kadıköy, İstanbul, Turkey,  Başka bir Sok, No: 456 Bina: 7 Daire: 8 Bina Adı: Uzun Apartmanı",
       "payment": "Credit Card",
-      "status": "prepared",
+      "status": "preparing",
       "basket_id": null,
       "delivery_time": "2024-12-26T23:59:59Z",
       "items": [
@@ -110,26 +110,7 @@
       "id": "1",
       "courier_id": "1",
       "status": "on_the_way",
-      "orders": [
-        "1",
-        "2"
-      ]
-    },
-    {
-      "id": "e603",
-      "courier_id": "2",
-      "status": "on_the_way",
-      "orders": [
-        "3"
-      ]
-    },
-    {
-      "id": "b489",
-      "courier_id": "3",
-      "status": "on_the_way",
-      "orders": [
-        "4"
-      ]
+      "orders": ["1", "2"]
     }
   ]
 }
