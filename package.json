@@ -15,7 +15,8 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "check-types": "turbo check-types",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "nuke:node_modules": "pnpm -r exec -- rm -fr node_modules"
   },
   "devDependencies": {
     "prettier": "^3.4.2",

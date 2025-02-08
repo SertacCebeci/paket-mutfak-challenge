@@ -6,6 +6,7 @@ import sharedConfig from '@paket/tailwind-config';
 const config: Pick<Config, 'content' | 'presets'> = {
   content: [
     '../../packages/features/src/**/*.{ts,tsx}',
+    '../../packages/shared/ui/components/**/*.{ts,tsx}',
     '../../apps/courier-chef/src/**/*.{ts,tsx}',
   ],
   presets: [sharedConfig],
