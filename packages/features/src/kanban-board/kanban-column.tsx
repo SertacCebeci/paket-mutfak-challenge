@@ -1,8 +1,9 @@
 import { OrderCard } from './order-card';
-import { BasketContainer } from './basket-container';
-import { Basket, Order } from '@paket/shared';
+
+import { BasketEntity, OrderEntity } from '@paket/shared';
 import { Select, Typography } from 'antd';
 import { useState } from 'react';
+import { Basket } from './basket';
 
 export type ColumnType = 'preparing' | 'on_shelf' | 'on_the_way';
 type SortOption = 'time' | 'address' | 'restaurant';
@@ -10,8 +11,8 @@ type SortDirection = 'asc' | 'desc';
 
 interface ColumnProps {
   type: ColumnType;
-  orders: Order[];
-  baskets: Basket[];
+  orders: OrderEntity[];
+  baskets: BasketEntity[];
 }
 
 const ColumnHeader: React.FC<{
@@ -20,7 +21,12 @@ const ColumnHeader: React.FC<{
   basketCount?: number;
   onSortChange: (option: SortOption, direction: SortDirection) => void;
 }> = ({ type, orderCount, basketCount, onSortChange }) => {
-  const title = type === 'preparing' ? 'Preparing' : type === 'on_shelf' ? 'On The Shelf' : 'On The Way';
+  const title =
+    type === 'preparing'
+      ? 'Preparing'
+      : type === 'on_shelf'
+        ? 'On The Shelf'
+        : 'On The Way';
 
   const sortOptions = {
     preparing: [
@@ -44,9 +50,9 @@ const ColumnHeader: React.FC<{
   }[type];
 
   return (
-    <div className="flex items-center justify-between mb-4">
+    <div className="flex items-center justify-between mb-4 text-white">
       <div>
-        <Typography.Title level={4} className="mb-0">
+        <Typography.Title level={4} className="mb-0 text-white">
           {title}
         </Typography.Title>
         <Typography.Text type="secondary">
@@ -66,7 +72,10 @@ const ColumnHeader: React.FC<{
   );
 };
 
-const BasketRenderer: React.FC<{ columnType: ColumnType; baskets: Basket[] }> = ({ columnType, baskets }) => {
+const BasketRenderer: React.FC<{
+  columnType: ColumnType;
+  baskets: BasketEntity[];
+}> = ({ columnType, baskets }) => {
   const filteredBaskets = baskets.filter((basket) => {
     if (columnType === 'on_shelf') {
       return basket.status === 'prepared';
@@ -79,7 +88,7 @@ const BasketRenderer: React.FC<{ columnType: ColumnType; baskets: Basket[] }> = 
   return (
     <div>
       {filteredBaskets.map((basket) => (
-        <BasketContainer key={basket.id} basket={basket} />
+        <Basket key={basket.id} basketId={basket.id} />
       ))}
     </div>
   );
@@ -87,7 +96,7 @@ const BasketRenderer: React.FC<{ columnType: ColumnType; baskets: Basket[] }> = 
 
 const OrderRenderer: React.FC<{
   columnType: ColumnType;
-  orders: Order[];
+  orders: OrderEntity[];
   sortOption: SortOption;
   sortDirection: SortDirection;
 }> = ({ columnType, orders, sortOption, sortDirection }) => {
@@ -104,7 +113,11 @@ const OrderRenderer: React.FC<{
     const multiplier = sortDirection === 'asc' ? 1 : -1;
     switch (sortOption) {
       case 'time':
-        return (new Date(a.delivery_time).getTime() - new Date(b.delivery_time).getTime()) * multiplier;
+        return (
+          (new Date(a.delivery_time).getTime() -
+            new Date(b.delivery_time).getTime()) *
+          multiplier
+        );
       case 'address':
         return a.address.localeCompare(b.address) * multiplier;
       default:
@@ -121,7 +134,11 @@ const OrderRenderer: React.FC<{
   );
 };
 
-export const KanbanColumn: React.FC<ColumnProps> = ({ type, orders, baskets }) => {
+export const KanbanColumn: React.FC<ColumnProps> = ({
+  type,
+  orders,
+  baskets,
+}) => {
   const [sortOption, setSortOption] = useState<SortOption>('time');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
 
@@ -132,7 +149,8 @@ export const KanbanColumn: React.FC<ColumnProps> = ({ type, orders, baskets }) =
 
   const filteredOrders = orders.filter((order) => {
     if (type === 'preparing') return order.status === 'preparing';
-    if (type === 'on_shelf') return order.status === 'prepared' && !order.basket_id;
+    if (type === 'on_shelf')
+      return order.status === 'prepared' && !order.basket_id;
     return false;
   });
 
@@ -143,7 +161,7 @@ export const KanbanColumn: React.FC<ColumnProps> = ({ type, orders, baskets }) =
   });
 
   return (
-    <div className="bg-gray-100 p-4 rounded-lg">
+    <div className="bg-slate-300 p-4 rounded-lg">
       <ColumnHeader
         type={type}
         orderCount={filteredOrders.length}
@@ -151,7 +169,12 @@ export const KanbanColumn: React.FC<ColumnProps> = ({ type, orders, baskets }) =
         onSortChange={handleSortChange}
       />
       <BasketRenderer columnType={type} baskets={baskets} />
-      <OrderRenderer columnType={type} orders={orders} sortOption={sortOption} sortDirection={sortDirection} />
+      <OrderRenderer
+        columnType={type}
+        orders={orders}
+        sortOption={sortOption}
+        sortDirection={sortDirection}
+      />
     </div>
   );
 };

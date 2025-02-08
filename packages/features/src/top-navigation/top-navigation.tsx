@@ -1,5 +1,5 @@
 import { Input } from 'antd';
-import { API, Test } from '@paket/shared';
+import { API } from '@paket/shared';
 import { SearchOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import Fuse from 'fuse.js';
@@ -17,17 +17,21 @@ export const TopNavigation: React.FC = () => {
     threshold: 0.4,
   });
 
-  const filteredOrders = searchTerm ? fuse.search(searchTerm).map((result) => result.item) : orders;
+  const filteredOrders = searchTerm
+    ? fuse.search(searchTerm).map((result) => result.item)
+    : orders;
 
-  const activeOrders = orders.filter((order) => order.status !== 'delivered').length;
+  const activeOrders = orders.filter(
+    (order) => order.status !== 'delivered',
+  ).length;
 
   return (
     <div className="bg-white shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 py-3">
+      <div className="max-w-7xl mx-auto px-2 py-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-4">
             <h1 className="text-xl font-bold">Courier Chef</h1>
-            <span className="text-gray-500">{activeOrders} Active Orders</span>
+            <span className="text-gray-700">{activeOrders} Active Orders</span>
           </div>
           <Input
             placeholder="Search orders..."
@@ -37,9 +41,7 @@ export const TopNavigation: React.FC = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <Test />
       </div>
-      <Test />
     </div>
   );
 };

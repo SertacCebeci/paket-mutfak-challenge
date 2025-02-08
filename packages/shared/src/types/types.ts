@@ -13,7 +13,7 @@ interface OrderItem {
   preparation_time: number;
 }
 
-export interface Order {
+export interface OrderEntity {
   id: string;
   address: string;
   payment: string;
@@ -23,16 +23,16 @@ export interface Order {
   restaurant: Restaurant;
   status: OrderStatus;
   basket_id: string | null;
+
   items: OrderItem[];
 }
-
-export interface Courier {
+export interface CourierEntity {
   id: string;
   name: string;
   basket_id: string | null;
 }
 
-export interface Basket {
+export interface BasketEntity {
   id: string;
   courier_id: string | null;
   delivered_by: string | null;

@@ -7,11 +7,11 @@ import {
   CheckCircleOutlined,
   LoadingOutlined,
 } from '@ant-design/icons';
-import { API, Order, OrderStatus } from '@paket/shared';
+import { API, OrderEntity, OrderStatus } from '@paket/shared';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 interface OrderCardProps {
-  order: Order;
+  order: OrderEntity;
 }
 
 export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
@@ -159,29 +159,21 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
           <Select
             style={{ width: 200 }}
             placeholder="Select basket"
+            onChange={(value) => {
+              if (value === 'new') {
+                createBasketMutation.mutate();
+              } else {
+                addToBasketMutation.mutate(value);
+              }
+            }}
             options={[
               { label: '+ Create new basket', value: 'new' },
               ...preparedBaskets.map((b) => ({
-                label: `Basket #${b.id}`,
+                label: `BasketEntity #${b.id}`,
                 value: b.id,
               })),
             ]}
           />
-          <Button
-            type="primary"
-            onClick={() => {
-              const selectElement = document.querySelector('.ant-select-selection-item') as HTMLElement;
-              const selectedValue = selectElement?.innerText;
-              if (selectedValue === '+ Create new basket') {
-                createBasketMutation.mutate();
-              } else {
-                const selectedOption = selectElement?.parentElement?.getAttribute('title');
-                addToBasketMutation.mutate(selectedOption as string);
-              }
-            }}
-          >
-            Add to Basket
-          </Button>
         </Space>
       );
     }
@@ -198,24 +190,15 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   };
 
   return (
-    <Card
-      size="small"
-      className="mb-2 hover:shadow-md transition-all"
-      title={
-        <div className="flex justify-between items-center">
-          <Space>
-            <Typography.Text strong>Order #{order.id}</Typography.Text>
-            <Tag color={getStatusColor(order.status)}>{order.status.replace('_', ' ').toUpperCase()}</Tag>
-          </Space>
-        </div>
-      }
-      actions={[
-        <div key="actions" className="px-4 py-2">
-          {renderOrderActions()}
-        </div>,
-      ]}
-    >
-      {renderOrderInfo()}
-    </Card>
+    <div className="bg-white rounded-lg border border-gray-200 mb-2 overflow-hidden hover:shadow-md transition-all">
+      <div className="px-4 py-3 border-b border-gray-100 flex justify-between items-center">
+        <Space>
+          <Typography.Text strong>Order #{order.id}</Typography.Text>
+          <Tag color={getStatusColor(order.status)}>{order.status.replace('_', ' ').toUpperCase()}</Tag>
+        </Space>
+      </div>
+      <div className="px-4 py-3">{renderOrderInfo()}</div>
+      <div className="px-4 py-3 bg-gray-50 border-t border-gray-100">{renderOrderActions()}</div>
+    </div>
   );
 };
