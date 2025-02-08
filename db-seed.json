@@ -67,6 +67,42 @@
             "name": "Ayran"
           }
         ]
+      },
+      {
+        "id": "4",
+        "address": "Kadıköy, İstanbul, Turkey,  Başka bir Sok, No: 456 Bina: 7 Daire: 8 Bina Adı: Uzun Apartmanı",
+        "payment": "Credit Card",
+        "status": "preparing",
+        "basket_id": null,
+        "delivery_time": "2024-12-26T23:59:59Z",
+        "items": [
+          {
+            "id": "5",
+            "name": "Havuçlu Salata"
+          },
+          {
+            "id": "6",
+            "name": "Yayık ayran"
+          }
+        ]
+      },
+      {
+        "id": "5",
+        "address": "Kadıköy, İstanbul, Turkey,  Başka bir Sok, No: 456 Bina: 7 Daire: 8 Bina Adı: Uzun Apartmanı",
+        "payment": "Credit Card",
+        "status": "preparing",
+        "basket_id": null,
+        "delivery_time": "2024-12-26T23:59:59Z",
+        "items": [
+          {
+            "id": "5",
+            "name": "Havuçlu Tavuklu Salata"
+          },
+          {
+            "id": "6",
+            "name": "Yayılmış ayran"
+          }
+        ]
       }
     ],
     "baskets": [
