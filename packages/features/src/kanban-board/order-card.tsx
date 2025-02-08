@@ -58,9 +58,17 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   });
 
   const renderActions = () => {
-    // Prevent any actions if order is on_the_way
+    // Orders in on_the_way status can only be marked as delivered
     if (order.status === 'on_the_way') {
-      return null;
+      return (
+        <Button
+          type="primary"
+          disabled={false}
+          onClick={() => updateOrderMutation.mutate({ id: order.id, status: 'delivered' })}
+        >
+          Mark as Delivered
+        </Button>
+      );
     }
 
     if (order.status === 'preparing') {

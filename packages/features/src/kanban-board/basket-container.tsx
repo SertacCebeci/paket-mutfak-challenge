@@ -24,18 +24,16 @@ export const BasketContainer = ({ basket }: BasketContainerProps) => {
           )
         );
       }
+
+      // If all orders are delivered, automatically mark basket as delivered
+      if (allOrdersDelivered) {
+        variables.status = 'delivered';
+      }
+
       return API.updateBasket(basket.id, variables);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['baskets'] });
-      queryClient.invalidateQueries({ queryKey: ['orders'] });
-    },
-  });
-
-  const markOrderDeliveredMutation = useMutation({
-    mutationFn: (orderId: string) => 
-      API.updateOrderStatus(orderId, 'delivered'),
-    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['orders'] });
     },
   });
@@ -86,33 +84,6 @@ export const BasketContainer = ({ basket }: BasketContainerProps) => {
           >
             Delete Basket
           </Button>
-        </div>
-      );
-    }
-
-    if (basket.status === 'on_the_way') {
-      return (
-        <div className="flex flex-col gap-2">
-          <div className="flex gap-2">
-            {ordersInBasket.map(order => (
-              <Button
-                key={order.id}
-                type={order.status === 'delivered' ? 'default' : 'primary'}
-                disabled={order.status === 'delivered'}
-                onClick={() => markOrderDeliveredMutation.mutate(order.id)}
-              >
-                Mark Order #{order.id} Delivered
-              </Button>
-            ))}
-          </div>
-          {allOrdersDelivered && (
-            <Button
-              type="primary"
-              onClick={() => updateBasketMutation.mutate({ status: 'delivered' })}
-            >
-              Complete Basket Delivery
-            </Button>
-          )}
         </div>
       );
     }
