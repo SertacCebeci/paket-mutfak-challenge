@@ -12,6 +12,7 @@ export const BasketContainer = ({ basket }: BasketContainerProps) => {
   const { data: couriers = [] } = useQuery({ queryKey: ['couriers'], queryFn: API.getCouriers });
 
   const ordersInBasket = orders.filter((order) => basket.orders.includes(order.id));
+  const allOrdersDelivered = ordersInBasket.every(order => order.status === 'delivered');
 
   const updateBasketMutation = useMutation({
     mutationFn: async (variables: Partial<Basket>) => {
@@ -27,6 +28,14 @@ export const BasketContainer = ({ basket }: BasketContainerProps) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['baskets'] });
+      queryClient.invalidateQueries({ queryKey: ['orders'] });
+    },
+  });
+
+  const markOrderDeliveredMutation = useMutation({
+    mutationFn: (orderId: string) => 
+      API.updateOrderStatus(orderId, 'delivered'),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['orders'] });
     },
   });
@@ -83,12 +92,28 @@ export const BasketContainer = ({ basket }: BasketContainerProps) => {
 
     if (basket.status === 'on_the_way') {
       return (
-        <Button
-          type="primary"
-          onClick={() => updateBasketMutation.mutate({ status: 'delivered' })}
-        >
-          Mark as Delivered
-        </Button>
+        <div className="flex flex-col gap-2">
+          <div className="flex gap-2">
+            {ordersInBasket.map(order => (
+              <Button
+                key={order.id}
+                type={order.status === 'delivered' ? 'default' : 'primary'}
+                disabled={order.status === 'delivered'}
+                onClick={() => markOrderDeliveredMutation.mutate(order.id)}
+              >
+                Mark Order #{order.id} Delivered
+              </Button>
+            ))}
+          </div>
+          {allOrdersDelivered && (
+            <Button
+              type="primary"
+              onClick={() => updateBasketMutation.mutate({ status: 'delivered' })}
+            >
+              Complete Basket Delivery
+            </Button>
+          )}
+        </div>
       );
     }
 
@@ -98,7 +123,14 @@ export const BasketContainer = ({ basket }: BasketContainerProps) => {
   return (
     <Card className="mb-4">
       <div className="flex justify-between items-center mb-4">
-        <h3>Basket #{basket.id}</h3>
+        <div className="flex items-center gap-2">
+          <h3>Basket #{basket.id}</h3>
+          {basket.status === 'on_the_way' && (
+            <span className="text-sm text-gray-500">
+              ({ordersInBasket.filter(o => o.status === 'delivered').length}/{ordersInBasket.length} delivered)
+            </span>
+          )}
+        </div>
         {renderActions()}
       </div>
       <div>

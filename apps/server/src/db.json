@@ -54,8 +54,8 @@
       "id": "3",
       "address": "Kadıköy, İstanbul, Turkey,  Başka bir Sok, No: 456 Bina: 7 Daire: 8 Bina Adı: Uzun Apartmanı",
       "payment": "Credit Card",
-      "status": "on_the_way",
-      "basket_id": "25fb",
+      "status": "preparing",
+      "basket_id": null,
       "delivery_time": "2024-12-26T23:59:59Z",
       "items": [
         {
@@ -72,8 +72,8 @@
       "id": "4",
       "address": "Kadıköy, İstanbul, Turkey,  Başka bir Sok, No: 456 Bina: 7 Daire: 8 Bina Adı: Uzun Apartmanı",
       "payment": "Credit Card",
-      "status": "prepared",
-      "basket_id": "70e0",
+      "status": "preparing",
+      "basket_id": null,
       "delivery_time": "2024-12-26T23:59:59Z",
       "items": [
         {
@@ -90,8 +90,8 @@
       "id": "5",
       "address": "Kadıköy, İstanbul, Turkey,  Başka bir Sok, No: 456 Bina: 7 Daire: 8 Bina Adı: Uzun Apartmanı",
       "payment": "Credit Card",
-      "status": "on_the_way",
-      "basket_id": "25fb",
+      "status": "preparing",
+      "basket_id": null,
       "delivery_time": "2024-12-26T23:59:59Z",
       "items": [
         {
@@ -109,28 +109,8 @@
     {
       "id": "1",
       "courier_id": "1",
-      "status": "delivered",
-      "orders": [
-        "1",
-        "2"
-      ]
-    },
-    {
-      "id": "25fb",
-      "courier_id": "1",
       "status": "on_the_way",
-      "orders": [
-        "3",
-        "5"
-      ]
-    },
-    {
-      "id": "70e0",
-      "courier_id": "2",
-      "status": "prepared",
-      "orders": [
-        "4"
-      ]
+      "orders": ["1", "2"]
     }
   ]
 }
