@@ -6,9 +6,10 @@ import {
   DeleteOutlined,
   SendOutlined
 } from '@ant-design/icons';
-import { useMutation, useQuery, useQueryClient,  API, Basket } from '@paket/shared';
+import {  API, Basket } from '@paket/shared';
 import { OrderCard } from './order-card';
 import React from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 interface BasketContainerProps {
   basket: Basket;

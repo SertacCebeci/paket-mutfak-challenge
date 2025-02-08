@@ -1,8 +1,9 @@
 import { Input } from 'antd';
-import { useQuery, API } from '@paket/shared';
+import {  API } from '@paket/shared';
 import { SearchOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import Fuse from 'fuse.js';
+import { useQuery } from '@tanstack/react-query';
 
 export const TopNavigation: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');

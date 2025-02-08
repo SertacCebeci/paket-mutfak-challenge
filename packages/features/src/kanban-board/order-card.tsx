@@ -7,7 +7,8 @@ import {
   CheckCircleOutlined,
   LoadingOutlined
 } from '@ant-design/icons';
-import { useMutation, useQuery, useQueryClient, API, Order, OrderStatus } from '@paket/shared';
+import { API, Order, OrderStatus } from '@paket/shared';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 interface OrderCardProps {
   order: Order;
