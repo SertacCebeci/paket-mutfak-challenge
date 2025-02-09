@@ -54,7 +54,7 @@ const BasketRenderer: React.FC<{
   return (
     <div>
       {filteredBaskets.map((basket) => (
-        <Basket key={basket.id} basketId={basket.id} />
+        <Basket key={basket.id} basketProp={basket} />
       ))}
     </div>
   );

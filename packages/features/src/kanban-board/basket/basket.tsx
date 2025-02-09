@@ -1,5 +1,5 @@
 import { Typography } from 'antd';
-import { API } from '@paket/shared';
+import { API, BasketEntity } from '@paket/shared';
 import { OrderCard } from '../order-card';
 import React from 'react';
 import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -7,17 +7,17 @@ import { BasketHeader } from './basket-header';
 import { useInvalidateAll } from '../../shared/hooks';
 
 interface BasketProps {
-  basketId: string;
+  basketProp: BasketEntity;
 }
 
-export const Basket: React.FC<BasketProps> = ({ basketId }) => {
+export const Basket: React.FC<BasketProps> = ({ basketProp }) => {
   const {
     data: basket,
     isSuccess,
     refetch,
   } = useQuery({
-    queryKey: ['baskets', basketId],
-    queryFn: () => API.getBasket(basketId),
+    queryKey: ['baskets', basketProp.id],
+    queryFn: () => API.getBasket(basketProp.id),
   });
 
   const invalidateAll = useInvalidateAll();
@@ -40,14 +40,14 @@ export const Basket: React.FC<BasketProps> = ({ basketId }) => {
       : false;
 
   React.useEffect(() => {
-    if (allOrdersDelivered) {
+    if (basket?.status === 'on_the_way' && allOrdersDelivered) {
       Promise.all(
         basketOrders.map((order_id) =>
           API.updateOrderStatus(order_id, 'delivered'),
         ),
       );
       console.log('all orders delivered');
-      API.updateBasket(basketId, {
+      API.updateBasket(basket.id, {
         ...basket,
         delivered_by: basket?.courier_id,
         courier_id: null,
@@ -55,7 +55,7 @@ export const Basket: React.FC<BasketProps> = ({ basketId }) => {
       });
 
       if (basket?.courier_id)
-        API.removeCourierFromBasket(basketId, basket?.courier_id);
+        API.removeCourierFromBasket(basket.id, basket?.courier_id);
       invalidateAll();
       refetch();
     }
@@ -75,9 +75,9 @@ export const Basket: React.FC<BasketProps> = ({ basketId }) => {
           ) : null;
         })}
         {orders.length === 0 && (
-          <Typography.Text type="secondary" className="block text-center py-4">
-            No orders in this BasketEntity
-          </Typography.Text>
+          <span className="text-slate-200 font-semibold text-center w-full flex items-center justify-center">
+            No orders in this Basket
+          </span>
         )}
       </div>
     </div>

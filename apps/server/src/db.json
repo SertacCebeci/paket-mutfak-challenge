@@ -3,12 +3,12 @@
     {
       "id": "1",
       "name": "Cemrehan Çavdar",
-      "basket_id": "1"
+      "basket_id": null
     },
     {
       "id": "2",
       "name": "Yasin Beyazlı",
-      "basket_id": "d414"
+      "basket_id": null
     },
     {
       "id": "3",
@@ -84,7 +84,7 @@
         "location": "Kadıköy"
       },
       "status": "delivered",
-      "basket_id": "d414",
+      "basket_id": "ae8c",
       "items": [
         {
           "id": "5",
@@ -103,7 +103,7 @@
       "address": "Kadıköy, İstanbul, Turkey,  Başka bir Sok, No: 456 Bina: 7 Daire: 8 Bina Adı: Uzun Apartmanı",
       "payment": "Credit Card",
       "status": "delivered",
-      "basket_id": "e779",
+      "basket_id": "895e",
       "delivery_time": "2024-12-26T23:59:59Z",
       "items": [
         {
@@ -121,7 +121,7 @@
       "address": "Kadıköy, İstanbul, Turkey,  Başka bir Sok, No: 456 Bina: 7 Daire: 8 Bina Adı: Uzun Apartmanı",
       "payment": "Credit Card",
       "status": "delivered",
-      "basket_id": "b430",
+      "basket_id": "0547",
       "delivery_time": "2024-12-26T23:59:59Z",
       "items": [
         {
@@ -149,27 +149,27 @@
       "updated_at": "2024-12-24T23:50:00Z"
     },
     {
-      "id": "d414",
+      "id": "ae8c",
       "courier_id": null,
-      "delivered_by": "2",
+      "delivered_by": null,
       "status": "delivered",
       "orders": [
         "3"
       ]
     },
     {
-      "id": "e779",
+      "id": "895e",
       "courier_id": null,
-      "delivered_by": "3",
+      "delivered_by": "2",
       "status": "delivered",
       "orders": [
         "4"
       ]
     },
     {
-      "id": "b430",
+      "id": "0547",
       "courier_id": null,
-      "delivered_by": "3",
+      "delivered_by": null,
       "status": "delivered",
       "orders": [
         "5"

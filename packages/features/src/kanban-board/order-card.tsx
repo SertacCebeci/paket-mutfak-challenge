@@ -188,7 +188,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
             options={[
               { label: '+ Create new basket', value: 'new' },
               ...preparedBaskets.map((b) => ({
-                label: `BasketEntity #${b.id}`,
+                label: `Basket #${b.id}`,
                 value: b.id,
               })),
             ]}
