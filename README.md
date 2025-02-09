@@ -70,4 +70,7 @@ Bu proje turborepo monorepo alt yapısı üzerinde pnpm ile hazırlanmıştır.
 
 ### Adımlar
 
-1. Repoyu klonlayın:
+1. Sistemin gereksinimleri giderdiğinden emin olun
+2. Projenin en dışında (root file) terminal açıp <code>pnpm install</code> komutunu çalıştırın
+3. Yine root fileda <code>pnpm run dev</code> komutunu çalıştırın. Bu komut monorepo altındaki appleri paralel olarak başlatacaktır.
+4. Terminalde açılan tuide yukarı ve aşağı ok tuşları ile server ve courier-chef applerinin terminalleri arasında geçiş yapabilirsiniz. Burada courier-chefe gelipi tuide çıkan http://localhost:5173/ linkine command (windowsda CTRL) + click atarsanız web app default browserda açılacaktır
