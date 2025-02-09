@@ -10,20 +10,15 @@ interface Restaurant {
 interface OrderItem {
   id: string;
   name: string;
-  preparation_time: number;
 }
 
 export interface OrderEntity {
   id: string;
   address: string;
   payment: string;
-  delivery_time: string;
-  order_time: string;
-  preparation_time: number;
   restaurant: Restaurant;
   status: OrderStatus;
   basket_id: string | null;
-
   items: OrderItem[];
 }
 export interface CourierEntity {

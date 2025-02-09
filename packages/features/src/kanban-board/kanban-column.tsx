@@ -30,8 +30,13 @@ const ColumnHeader: React.FC<{
         <Typography.Title level={4} className="mb-0 text-white">
           {title}
         </Typography.Title>
-        <Typography.Text type="secondary">
-          {orderCount} Orders {basketCount ? `in ${basketCount} Baskets` : ''}
+        <Typography.Text type="secondary" className="flex gap-2">
+          {orderCount > 0 && (
+            <span className="text-red-600">{orderCount} Orders</span>
+          )}
+          {basketCount && (
+            <span className="text-blue-600">{basketCount} Baskets</span>
+          )}
         </Typography.Text>
       </div>
     </div>

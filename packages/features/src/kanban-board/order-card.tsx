@@ -1,20 +1,10 @@
-import {
-  Card,
-  Typography,
-  Tag,
-  Select,
-  Button,
-  Tooltip,
-  Space,
-  Divider,
-} from 'antd';
+import { Typography, Tag, Select, Button, Space } from 'antd';
 import {
   ClockCircleOutlined,
   EnvironmentOutlined,
   CreditCardOutlined,
   ShopOutlined,
   CheckCircleOutlined,
-  LoadingOutlined,
 } from '@ant-design/icons';
 import { API, OrderEntity, OrderStatus } from '@paket/shared';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -82,36 +72,16 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   const getStatusColor = (status: OrderStatus) => {
     switch (status) {
       case 'preparing':
-        return 'processing';
+        return 'error';
       case 'prepared':
         return 'warning';
       case 'on_the_way':
-        return 'blue';
+        return 'processing';
       case 'delivered':
         return 'success';
       default:
         return 'default';
     }
-  };
-
-  const renderTimer = () => {
-    if (order.status === 'preparing') {
-      const deliveryTime = new Date(order.delivery_time);
-      const timeLeft = deliveryTime.getTime() - Date.now();
-      const minutesLeft = Math.floor(timeLeft / 1000 / 60);
-
-      return (
-        <Tooltip title="Time until delivery">
-          <Tag
-            icon={<ClockCircleOutlined />}
-            color={minutesLeft < 30 ? 'red' : 'blue'}
-          >
-            {minutesLeft}m
-          </Tag>
-        </Tooltip>
-      );
-    }
-    return null;
   };
 
   const renderOrderInfo = () => (
@@ -123,7 +93,6 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
         <Tag icon={<CreditCardOutlined />} color="green">
           {order.payment}
         </Tag>
-        {renderTimer()}
       </Space>
 
       <Typography.Paragraph ellipsis={{ rows: 2 }} className="mb-0">
@@ -161,7 +130,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
       return (
         <Button
           type="primary"
-          icon={<LoadingOutlined />}
+          icon={<ClockCircleOutlined />}
           onClick={() =>
             updateOrderMutation.mutate({ id: order.id, status: 'prepared' })
           }
