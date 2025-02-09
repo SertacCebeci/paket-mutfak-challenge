@@ -1,175 +1,321 @@
-# Courier Chef Order Managament App
+# Courier Chef Order Management System
 
-## Description
+Product Requirements Document (PRD)
 
-This application is specifically designed for courier chefs in kitchens that are tasked with checking orders, order contents, baskets and couriers
+## Product Overview
+
+The Courier Chef Order Management System is a specialized application designed for kitchen staff to efficiently manage food delivery orders, organize them into delivery groups (baskets), and coordinate with delivery couriers. The system uses a Kanban-style interface to visualize and manage the entire order fulfillment process.
+
+## Business Objectives
+
+1. Streamline the order preparation and delivery process in commercial kitchens
+2. Optimize courier efficiency by enabling logical grouping of orders
+3. Provide real-time visibility into order status and courier assignments
+4. Reduce delivery times through efficient order batching
+5. Minimize errors in order handling and delivery assignments
 
 ## Core Entities
 
-### Courier
-The person that is tasked with taking out orders from the kitchen and delivering them to the customers
+### Orders
 
-#### Example of Courier
+- **Definition**: Individual customer orders containing one or more food items
+- **Attributes**:
+  - Unique ID
+  - Delivery address
+  - Payment method
+  - Delivery time
+  - Status (preparing, prepared, on_the_way, delivered)
+  - Basket assignment (nullable)
+  - Order items (array of items with id and name)
+  - Restaurant information
+  - Preparation time
+  - Order time
 
-<code>
-{ "id": "3", "name": "Duhan Günsel" }
-</code>
+### Baskets
 
-### Order
+- **Definition**: Logical grouping of orders for efficient delivery
+- **Attributes**:
+  - Unique ID
+  - Assigned courier ID (nullable)
+  - Delivered by courier ID (nullable)
+  - Status (prepared, on_the_way, delivered)
+  - Array of order IDs
+- **Business Rules**:
+  - Must contain at least one order
+  - Can only be assigned to one courier through a one-to-one relationship
+  - Must contain orders with geographically proximate delivery addresses
+  - When assigned to a courier, the courier's basket_id is updated to match this basket's ID
+  - When marked as delivered:
+    - delivered_by field is set to the courier_id that delivered it
+    - courier_id is set to null
+    - assigned courier's basket_id is set to null
 
-- Contains one or more items that is requested by customer
-- It contains the information about delivery adress and ordering time
-- has the status of preparing, prepared, on_the_way, and delivered
-- has many to one relationship with basket
+### Couriers
 
-#### Example of Order
+- **Definition**: Delivery personnel responsible for delivering order baskets
+- **Attributes**:
+  - Unique ID
+  - Name
+  - Basket ID (nullable)
+- **Business Rules**:
+  - Can only be assigned to one basket at a time through basket_id
+  - Courier availability is determined by basket_id:
+    - If basket_id is null: Courier is available for delivery
+    - If basket_id is not null: Courier is currently delivering that basket
+  - When assigned to a basket, both the basket's courier_id and the courier's basket_id must be updated atomically
+  - When a basket is marked as delivered, the courier's basket_id is automatically set to null
 
-<code>
-{
-    "id": "1",
-    "address": "Kadıköy, İstanbul, Turkey, Sahte Sokak, No: 123 Daire: 4",
-    "payment": "Credit Card",
-    "delivery_time": "2024-12-24T23:59:59Z",
-    "status": "preparing",
-    "basket_id": null,
-    "items": [
-        { "id": "1", "name": "Şerifali Köfte" },
-        { "id": "2", "name": "Mercimek Çorbası" }
-    ]
-},
-</code>
+## User Interface
 
-### Basket
+### Layout
 
-when courier comes to the kitchen they usually take more than one order in order to maximize courier efficieny. a basket is prepared by the courier chef depending on the orders delivery adress location. usually orders that contain close enough delivery adresses grouped together to make a basket
+The interface follows a Kanban board design with three main columns, each featuring order count and sorting capabilities:
 
-- grouping of one or more orders
-- this contains orders that are required to be assigned to a courier
-- has the status of, prepared, on_the_way, delivered
-- it has one to many connection with orders
+#### Column Header Structure
 
-#### Example of Basket
+Each column header contains:
 
-<code>
-{
-    "id": "1",
-    "courier_id": "1",
-    "status": "on_the_way",
-    "orders": [1, 2]
-}
-</code>
+- Column title
+- Order count indicator showing total number of contained orders
+- Sorting controls with options for:
+  - Order time (ascending/descending)
+  - Preparation time (ascending/descending)
+  - Restaurant name (alphabetical)
+  - Delivery address (alphabetical)
+
+#### 1. Preparing Column
+
+- **Content**: Individual orders in preparation
+- **Count Display**: Shows total number of orders being prepared
+- **Display Elements**:
+  - Order ID
+  - Preparation timer
+  - Order timestamp
+  - Restaurant name
+  - Payment method
+  - Complete delivery address
+- **Actions**:
+  - Mark order as prepared
+- **Sorting Options**:
+  - By preparation time remaining
+  - By order received time
+  - By restaurant name
+
+#### 2. On the Shelf Column
+
+- **Organization**: Two sections
+  - Top: Active baskets
+  - Bottom: Unassigned prepared orders
+- **Count Display**:
+  - Total orders in the column
+  - Breakdown of basketed vs unbasked orders
+- **Display Elements for Orders**:
+  - All order information
+  - Basket assignment options
+- **Display Elements for Baskets**:
+  - Basket ID
+  - Contained orders
+  - Courier assignment status
+  - Available couriers dropdown (shows only couriers with null basket_id)
+- **Actions**:
+  - Create new basket
+  - Add/remove orders from baskets
+  - Assign available courier to basket
+  - Delete basket
+  - Move basket to "On The Way"
+- **Sorting Options**:
+  - By time since preparation completed
+  - By delivery address proximity
+  - By restaurant name
+
+#### 3. On The Way Column
+
+- **Content**: Active delivery baskets
+- **Count Display**:
+  - Total orders in delivery
+  - Active couriers count
+- **Display Elements**:
+  - Basket information
+  - Assigned courier name
+  - Contained orders
+  - Delivery status
+- **Actions**:
+  - Mark orders as delivered
+  - Mark basket as delivered (automatically frees assigned courier)
+- **Sorting Options**:
+  - By courier name
+  - By delivery time
+  - By number of orders in basket
 
 ### Top Navigation
 
-The top navigation shows the title of the application, how many orders and currently shown in application and search functionality that fuzzy searchs the orders
+- Application title
+- Global order count display showing total orders in system
+- Search functionality with fuzzy search capability for orders
 
-## Features
-This application will take a form similar to a <b>Kanban Board</b> with three columns.
+## Core Functionality
 
-### Columns
+### Order Management
 
-The Kanban Board columns are Preparing, On the Shelf, and On The Way. Preparing column can only contain orders cards. on the shelf column can contain a mixture of baskets and orders. on the way column should only contain baskets.
+1. **Order Creation**
 
-on the shelf column displays the baskets at the top leaving orders taht are not basketed on the bottom
+   - Orders enter the system in "preparing" status
+   - Automatically appear in Preparing column
 
-### Order Card
+2. **Order Preparation**
 
-Visualizes inforamtion about an order. It has several action buttons depending on which column and state order is in. If an order is in preparing state, it will have a button to mark it as prepared. If an order is in prepared state and not in a basket, it will have a button create a new basket and add this order to it and a selection to add the order to an exisisting prepared basket. If an order is in a basket, it will have a button to remove it from the basket. If an order is in a basket.
+   - Kitchen staff can mark orders as "prepared"
+   - Prepared orders move to On the Shelf column
 
-### Basket Card
+3. **Basket Creation**
+   - Two methods for creating baskets:
+     - Create new basket with single order
+     - Add order to existing basket
+   - Orders can be removed from baskets if status is "prepared"
 
-Visualizes information about a basket. Mainly contains the order card that are in the basket.
+### Basket Management
 
-If a basket is prepared it will have a selection of couriers to assign a courier
-If a basket is perpared, assigned to a courier, and has atleast one order than It will has a button to mark it as on the way
-If a basket is on the way, it will have a button to mark it as delivered
-A basket that is prepared also has a button that will delete the basket and remove all orders from it
+1. **Basket Creation Rules**
 
-## Behaviors
+   - Can be created with one or more orders
+   - Orders should have proximate delivery addresses
 
-When an order's status becomes preparing
-Then order is moved to the preparing column
-Then order has a button to mark it as prepared
+2. **Courier Assignment**
 
-When mark it as prepared button is clicked
-Then order's status is changed to prepared
-And order is moved to the on the shelf column
-And order has a basket select with options "create a basket" and all the existing on shelf basket_ids, like
+   - Baskets can only be assigned to couriers with null basket_id
+   - Assignment process:
+     1. System checks courier availability (basket_id is null)
+     2. Updates basket's courier_id and courier's basket_id in a single transaction
+     3. Only after successful assignment can basket move to "On The Way" status
+   - Assignment is final once basket is "On The Way"
 
-- create a basket
-- add to basket_1
-- add to basket_2
-  ...
-  And an order has a button to add to baske
+3. **Basket State Transitions**
+   - prepared → on_the_way (requires courier assignment)
+   - on_the_way → delivered (all orders must be delivered, automatically nullifies courier's basket_id)
 
-If an order that is not basketed and on shelf exists
-When order's basket select is "create a basket"
-And order's "add to basket" button is clicked
-Then a new basket empty basket is created
-{
-id: <uuid>
-courier_id: null,
-status: "prepared",
-orders: []
-}
-Then order is added to the basket
-{
-id: <uuid>
-courier_id: null,
-status: "prepared",
-orders: [<uuid_of_the_order>]
-}
-Then the order's basket_id field is assigned to created basket's id
-{
-"id": "1",
-"address": "Kadıköy, İstanbul, Turkey, Sahte Sokak, No: 123 Daire: 4",
-"payment": "Credit Card",
-"delivery_time": "2024-12-24T23:59:59Z",
-"status": "prepared",
-"basket_id": <created_basket_id>,
-"items": [
-{ "id": "1", "name": "Şerifali Köfte" },
-{ "id": "2", "name": "Mercimek Çorbası" }
-]
-},
-Then basket is rendered under the on the shelf column with order inside of it
+### Delivery Management
 
-If an order that is not basketed and on the shelf exists
-When basket selection is "add to <basket_1>"
-Then order is added to <basket_1>
-And orders basket_id is updated to <basket_1>
-And order is rendered under basket
+1. **Basket Delivery**
 
-When an order is in a basket
-Then order is moved to the basket card
-Then order has a button to remove from the basket
+   - Baskets in "On The Way" status cannot be modified
+   - Individual orders marked as delivered
+   - When basket is marked as delivered:
+     1. All contained orders are marked as delivered
+     2. Assigned courier's basket_id is set to null
+     3. Basket is removed from active view
 
-When remove from the basket button is clicked
-Then order is removed from the basket
-Then order is moved to the on the shelf column
+2. **Status Updates**
+   - Similar to real-time (polled) updates for order status changes
+   - Automatic removal of completed baskets
+   - Real-time updates of courier availability status
 
-When a basket is prepared
-Then it has a button to delete the basket
+## Additional Notes on Column Management
 
-When delete the basket button is clicked
-and basket has orders inside
-Then orders are placed under on the shelf
-and orders basket_id is null
-and basket is deleted
+### Column Order Persistence
 
-When a basket is prepared
-Then basket is moved to the on the shelf column
-Then basket has a selection to assign a courier
+- Column sorting preferences are preserved between sessions
+- Each column maintains independent sorting preferences
+- Default sorting can be configured per column:
+  - Preparing: By preparation time remaining
+  - On the Shelf: By time since preparation completed
+  - On The Way: By delivery time
 
-When a courier is assigned to a basket
-and basket has atleast one order
-Then basket has a button to move on the way
+### Column Order Behavior
 
-When a basket is on the way
-Then basket has a button to mark as delivered
+- Sort indicators visually show current sort direction
+- Secondary sort options available for tie-breaking
+- Sorting applies to:
+  - Individual orders in Preparing column
+  - Baskets and unassigned orders separately in On the Shelf column
+  - Baskets in On The Way column
 
-When an order is on the way
-Then it has no actions (an order that is on the way cannot be moved out of the basket)
+### Performance Considerations
 
-When mark it as delivered button is clicked
-Then basket is removed from the on the way column
+- Client-side sorting for immediate response
+- Debounced sort operations for large datasets
+- Optimized re-rendering for sort operations
+
+## Technical Requirements
+
+### Frontend Technologies
+
+- React as primary framework
+- Optional integration with:
+  - Ant Design for UI components
+  - React Query for data management
+
+### Backend Integration
+
+- RESTful API integration
+- JSON Server for development/testing
+
+## Technical Considerations for Courier Management
+
+### Data Consistency
+
+1. **Atomic Operations**
+
+   - Courier assignment must update both basket and courier records atomically
+   - Database transactions should ensure data consistency
+   - Optimistic locking to prevent concurrent assignment conflicts
+
+2. **Status Validation**
+
+   - Regular validation of courier-basket relationships
+   - Automated cleanup of inconsistent states
+   - Logging of all status changes for audit purposes
+
+3. **API Requirements**
+   - Endpoint for checking courier availability
+   - Combined endpoint for courier-basket assignment
+   - Status update notifications for courier availability changes
+
+## Optional Enhancements
+
+### User Experience
+
+1. **Context Menus**
+
+   - Quick actions for orders
+   - Courier assignment shortcuts
+
+2. **Animations and Transitions**
+
+   - Status change animations
+   - Basket creation/deletion effects
+   - Hover states and interactive feedback
+
+3. **Notifications**
+   - Operation success/failure alerts
+   - New order notifications
+   - Courier assignment confirmations
+
+### Additional Features
+
+1. **Completed Orders Column**
+
+   - Historical view of delivered orders
+   - Delivery performance metrics
+
+2. **Order Details Modal**
+   - Detailed view of order information
+   - Order history and status changes
+   - Customer contact information
+
+## Success Metrics
+
+1. Order processing time
+2. Average basket creation time
+3. Delivery efficiency
+4. Error rate in order handling
+5. User satisfaction metrics
+
+## Documentation Requirements
+
+1. README file with:
+   - Project setup instructions
+   - Running instructions
+   - Screenshots of key interfaces
+   - Feature documentation
+2. Code documentation
+3. API integration documentation
