@@ -21,7 +21,7 @@ export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
         <span className="underline hover:no-underline">Order #{order.id}</span>
       </Typography.Text>
       <Modal
-        title={`Order Details #${order.id}`}
+        title={`Order #${order.id}`}
         open={open}
         onCancel={() => setOpen(false)}
         footer={null}
