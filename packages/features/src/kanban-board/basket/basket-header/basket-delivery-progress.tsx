@@ -22,6 +22,13 @@ export const BasketDeliveryProgress: React.FC<{ basket: BasketEntity }> = ({
       100,
   );
 
+  if (progress === 100) {
+    API.updateBasket(basket.id, {
+      ...basket,
+      status: 'delivered',
+    });
+  }
+
   return (
     <Progress
       type="line"

@@ -3,7 +3,7 @@
     {
       "id": "1",
       "name": "Cemrehan Çavdar",
-      "basket_id": null
+      "basket_id": "1"
     },
     {
       "id": "2",
@@ -29,7 +29,7 @@
         "name": "Köfteci Yusuf",
         "location": "Kadıköy"
       },
-      "status": "delivered",
+      "status": "on_the_way",
       "basket_id": "1",
       "items": [
         {
@@ -56,7 +56,7 @@
         "name": "Adana Ocakbaşı",
         "location": "Bağdat Caddesi"
       },
-      "status": "delivered",
+      "status": "on_the_way",
       "basket_id": "1",
       "items": [
         {
@@ -83,8 +83,8 @@
         "name": "Tavukçu Mehmet",
         "location": "Kadıköy"
       },
-      "status": "delivered",
-      "basket_id": "ae8c",
+      "status": "preparing",
+      "basket_id": null,
       "items": [
         {
           "id": "5",
@@ -102,8 +102,8 @@
       "id": "4",
       "address": "Kadıköy, İstanbul, Turkey,  Başka bir Sok, No: 456 Bina: 7 Daire: 8 Bina Adı: Uzun Apartmanı",
       "payment": "Credit Card",
-      "status": "delivered",
-      "basket_id": "895e",
+      "status": "preparing",
+      "basket_id": null,
       "delivery_time": "2024-12-26T23:59:59Z",
       "items": [
         {
@@ -120,8 +120,8 @@
       "id": "5",
       "address": "Kadıköy, İstanbul, Turkey,  Başka bir Sok, No: 456 Bina: 7 Daire: 8 Bina Adı: Uzun Apartmanı",
       "payment": "Credit Card",
-      "status": "delivered",
-      "basket_id": "0547",
+      "status": "preparing",
+      "basket_id": null,
       "delivery_time": "2024-12-26T23:59:59Z",
       "items": [
         {
@@ -138,42 +138,12 @@
   "baskets": [
     {
       "id": "1",
-      "courier_id": null,
-      "delivered_by": "1",
-      "status": "delivered",
-      "orders": [
-        "1",
-        "2"
-      ],
+      "courier_id": "1",
+      "delivered_by": null,
+      "status": "on_the_way",
+      "orders": ["1", "2"],
       "created_at": "2024-12-24T23:45:00Z",
       "updated_at": "2024-12-24T23:50:00Z"
-    },
-    {
-      "id": "ae8c",
-      "courier_id": null,
-      "delivered_by": null,
-      "status": "delivered",
-      "orders": [
-        "3"
-      ]
-    },
-    {
-      "id": "895e",
-      "courier_id": null,
-      "delivered_by": "2",
-      "status": "delivered",
-      "orders": [
-        "4"
-      ]
-    },
-    {
-      "id": "0547",
-      "courier_id": null,
-      "delivered_by": null,
-      "status": "delivered",
-      "orders": [
-        "5"
-      ]
     }
   ]
 }

@@ -197,9 +197,7 @@ export class API {
     if (!basket.courier_id) return;
 
     const currentCourierId = basket.courier_id;
-    // I need a way to make these transactional
-    // this needs to be one function call from the backend server in prod
-
+    // Update basket status, courier information, and all orders
     const results = await Promise.all([
       // Update basket status and courier information
       fetch(`${BASE_URL}/baskets/${basketId}`, {
@@ -217,12 +215,14 @@ export class API {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ basket_id: null }),
       }),
-      // Mark all orders as delivered
+      // Mark all orders as delivered and update their basket_id to null
       ...basket.orders.map((orderId) =>
         fetch(`${BASE_URL}/orders/${orderId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status: 'delivered' }),
+          body: JSON.stringify({
+            status: 'delivered',
+          }),
         }),
       ),
     ]);

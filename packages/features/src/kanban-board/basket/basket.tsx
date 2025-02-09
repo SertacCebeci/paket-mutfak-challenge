@@ -2,7 +2,12 @@ import { Typography } from 'antd';
 import { API, BasketEntity } from '@paket/shared';
 import { OrderCard } from '../order-card';
 import React from 'react';
-import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQueries,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { BasketHeader } from './basket-header';
 import { useInvalidateAll } from '../../shared/hooks';
 
@@ -31,6 +36,17 @@ export const Basket: React.FC<BasketProps> = ({ basketProp }) => {
     })),
   });
 
+  const markDeliveredMutation = useMutation({
+    mutationFn: async ({ id }: { id: string }) => {
+      await API.markBasketAsDelivered(id);
+    },
+
+    onSuccess: async () => {
+      await invalidateAll();
+      await refetch();
+    },
+  });
+
   const allOrdersDelivered =
     orders.length > 0
       ? orders.reduce((acc, order) => {
@@ -39,25 +55,9 @@ export const Basket: React.FC<BasketProps> = ({ basketProp }) => {
         }, true)
       : false;
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     if (basket?.status === 'on_the_way' && allOrdersDelivered) {
-      Promise.all(
-        basketOrders.map((order_id) =>
-          API.updateOrderStatus(order_id, 'delivered'),
-        ),
-      );
-      console.log('all orders delivered');
-      API.updateBasket(basket.id, {
-        ...basket,
-        delivered_by: basket?.courier_id,
-        courier_id: null,
-        status: 'delivered',
-      });
-
-      if (basket?.courier_id)
-        API.removeCourierFromBasket(basket.id, basket?.courier_id);
-      invalidateAll();
-      refetch();
+      markDeliveredMutation.mutate({ id: basket.id });
     }
   }, [allOrdersDelivered]);
 
