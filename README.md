@@ -21,7 +21,7 @@ Bu proje turborepo monorepo alt yapısı üzerinde pnpm ile hazırlanmıştır.
 
 - **basket_id**: bire bir ilişkiyi tamamlamanak adına kuryeye sepet id eklendi
 
-### Basket (Sepet)
+### Basket (Sepet)
 
 - **delivered_by**: tamamlanmış siparişin kimin tarafiından teslim edildiğini görmek için eklendi
 
