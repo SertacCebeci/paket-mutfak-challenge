@@ -4,6 +4,7 @@ import { OrderCard } from '../order-card';
 import React from 'react';
 import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import { BasketHeader } from './basket-header';
+import { useInvalidateAll } from '../../shared/hooks';
 
 interface BasketProps {
   basketId: string;
@@ -19,7 +20,7 @@ export const Basket: React.FC<BasketProps> = ({ basketId }) => {
     queryFn: () => API.getBasket(basketId),
   });
 
-  const queryClient = useQueryClient();
+  const invalidateAll = useInvalidateAll();
 
   const basketOrders = basket?.orders || [];
 
@@ -30,25 +31,35 @@ export const Basket: React.FC<BasketProps> = ({ basketId }) => {
     })),
   });
 
-  // if all orders are delivered, mark basket as delivered
+  const allOrdersDelivered =
+    orders.length > 0
+      ? orders.reduce((acc, order) => {
+          if (!order.isSuccess) return false;
+          return acc && order.data.status === 'delivered';
+        }, true)
+      : false;
+
   React.useEffect(() => {
-    if (!orders) return;
-    if (orders.length === 0) return;
-    if (orders.some((order) => !order.isSuccess)) return;
-
-    const allOrdersDelivered = orders.reduce((acc, order) => {
-      if (!order.isSuccess) return false;
-      return acc && order.data.status === 'delivered';
-    }, true);
-
     if (allOrdersDelivered) {
-      console.log('Marking basket as delivered');
-      API.markBasketAsDelivered(basketId);
-      // remove when pollishing other components
-      queryClient.invalidateQueries({ queryKey: ['baskets'] });
+      Promise.all(
+        basketOrders.map((order_id) =>
+          API.updateOrderStatus(order_id, 'delivered'),
+        ),
+      );
+      console.log('all orders delivered');
+      API.updateBasket(basketId, {
+        ...basket,
+        delivered_by: basket?.courier_id,
+        courier_id: null,
+        status: 'delivered',
+      });
+
+      if (basket?.courier_id)
+        API.removeCourierFromBasket(basketId, basket?.courier_id);
+      invalidateAll();
       refetch();
     }
-  }, [orders]);
+  }, [allOrdersDelivered]);
 
   if (!isSuccess) return null;
 
