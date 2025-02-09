@@ -50,6 +50,16 @@ Bu proje turborepo monorepo alt yapısı üzerinde pnpm ile hazırlanmıştır.
 - Buradaki sepet silinemez, içerisindeki sipariş dışarı çıkarılamaz, sepete başka kurye atanamaz
 - Sepet altındaki tüm siparişler teslim edilirse sepet otomatik olarak teslim edilmiş sayılır. Teslim eden kısmına kuryenin adı girilir. Kurye id kısmı boşaltılır.
 
+## Ekler
+
+### Delivered (teslim edilmişler) kolonu
+
+- bu kolonda sadece sepetler vardır ve bu sepetler üzerinde herhangi bir aksiyon alınamaz
+
+### Sipariş Detayı Modalı
+
+- Sipraişlerin idlerine tıklanılarak açılabilen ve sipariş detaylarını gösteren bir modal
+
 ## Teknolojiler
 
 - React
