@@ -97,13 +97,13 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
 
       <Typography.Paragraph ellipsis={{ rows: 2 }} className="mb-0">
         <EnvironmentOutlined className="mr-1" />
-        {order.address}
+        <span className="text-xs">{order.address}</span>
       </Typography.Paragraph>
 
       <Space wrap>
         {order.items.map((item) => (
-          <Tag key={item.id} bordered={false}>
-            {item.name}
+          <Tag key={item.id} bordered={true}>
+            <span className="text-sm">{item.name}</span>
           </Tag>
         ))}
       </Space>

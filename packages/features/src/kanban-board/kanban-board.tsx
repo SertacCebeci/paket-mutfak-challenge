@@ -44,10 +44,13 @@ export const KanbanBoard: React.FC = () => {
     {
       type: 'on_the_way',
     },
+    {
+      type: 'delivered',
+    },
   ];
 
   return (
-    <div className="grid grid-cols-3 gap-4 p-4">
+    <div className="grid grid-cols-4 gap-4 p-4">
       {columns.map((column) => (
         <KanbanColumn
           key={column.type}

@@ -4,7 +4,7 @@ import { BasketEntity, OrderEntity } from '@paket/shared';
 import { Typography } from 'antd';
 import { Basket } from './basket';
 
-export type ColumnType = 'preparing' | 'on_shelf' | 'on_the_way';
+export type ColumnType = 'preparing' | 'on_shelf' | 'on_the_way' | 'delivered';
 
 interface ColumnProps {
   type: ColumnType;
@@ -17,12 +17,16 @@ const ColumnHeader: React.FC<{
   orderCount: number;
   basketCount?: number;
 }> = ({ type, orderCount, basketCount }) => {
-  const title =
-    type === 'preparing'
-      ? 'Preparing'
-      : type === 'on_shelf'
-        ? 'On The Shelf'
-        : 'On The Way';
+  let title = '';
+  if (type === 'preparing') {
+    title = 'Preparing';
+  } else if (type === 'on_shelf') {
+    title = 'On The Shelf';
+  } else if (type === 'on_the_way') {
+    title = 'On The Way';
+  } else {
+    title = 'Delivered';
+  }
 
   return (
     <div className="flex items-center justify-between mb-4 text-white">
@@ -52,6 +56,8 @@ const BasketRenderer: React.FC<{
       return basket.status === 'prepared';
     } else if (columnType === 'on_the_way') {
       return basket.status === 'on_the_way';
+    } else if (columnType === 'delivered') {
+      return basket.status === 'delivered';
     }
     return false;
   });
@@ -102,6 +108,7 @@ export const KanbanColumn: React.FC<ColumnProps> = ({
   const filteredBaskets = baskets.filter((basket) => {
     if (type === 'on_shelf') return basket.status === 'prepared';
     if (type === 'on_the_way') return basket.status === 'on_the_way';
+    if (type === 'delivered') return basket.status === 'delivered';
     return false;
   });
 
