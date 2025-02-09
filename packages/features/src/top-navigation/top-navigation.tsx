@@ -2,7 +2,6 @@ import { Input } from 'antd';
 import { API } from '@paket/shared';
 import { SearchOutlined } from '@ant-design/icons';
 import { useState } from 'react';
-import Fuse from 'fuse.js';
 import { useQuery } from '@tanstack/react-query';
 
 export const TopNavigation: React.FC = () => {
@@ -11,15 +10,6 @@ export const TopNavigation: React.FC = () => {
     queryKey: ['orders'],
     queryFn: API.getOrders,
   });
-
-  const fuse = new Fuse(orders, {
-    keys: ['id', 'address', 'items.name'],
-    threshold: 0.4,
-  });
-
-  const filteredOrders = searchTerm
-    ? fuse.search(searchTerm).map((result) => result.item)
-    : orders;
 
   const activeOrders = orders.filter(
     (order) => order.status !== 'delivered',
@@ -33,14 +23,6 @@ export const TopNavigation: React.FC = () => {
             <h1 className="text-xl font-bold">Courier Chef</h1>
             <span className="text-gray-700">{activeOrders} Active Orders</span>
           </div>
-          <Input
-            placeholder="Search orders..."
-            prefix={<SearchOutlined />}
-            className="border border-gray-300"
-            style={{ width: 250 }}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
         </div>
       </div>
     </div>
