@@ -8,6 +8,7 @@ import {
 } from '@ant-design/icons';
 import { API, OrderEntity, OrderStatus } from '@paket/shared';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { OrderDetailsModal } from './order-details-modal';
 
 interface OrderCardProps {
   order: OrderEntity;
@@ -181,7 +182,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
     <div className="bg-white rounded-lg border border-gray-200 mb-2 overflow-hidden hover:shadow-xl shadow-md transition-all">
       <div className="px-4 py-3 border-b border-gray-100 flex justify-between items-center">
         <Space>
-          <Typography.Text strong>Order #{order.id}</Typography.Text>
+          <OrderDetailsModal order={order} />
           <Tag color={getStatusColor(order.status)}>
             {order.status.replace('_', ' ').toUpperCase()}
           </Tag>
